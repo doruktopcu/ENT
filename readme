@@ -1,0 +1,2 @@
+This package can be run on native python. Does not import functions out of other libraries.
+It includes just a little portion of the functions in Elementary Number Theory (more to come..)
