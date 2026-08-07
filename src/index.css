@@ -1,0 +1,347 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Fonts are deliberately NOT pulled from fonts.googleapis.com.
+ * A Manifest V3 extension page fetching remote CSS/font files leaks a request
+ * to a third party on every popup open and breaks entirely when offline.
+ * System stacks keep the lab self-contained.
+ */
+:root {
+  --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-mono: 'Cascadia Code', 'Fira Code', Consolas, 'SF Mono', 'Liberation Mono', monospace;
+
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------------------
+ * Palette. Values are bare "R G B" triplets consumed by tailwind.config.js as
+ * rgb(var(--c-*) / <alpha-value>). Light mode inverts the neutral ramp and
+ * darkens the accent ramps, so a component written as `text-amber-300` on
+ * `bg-slate-900` stays legible in both themes with no per-class variants.
+ * ------------------------------------------------------------------------- */
+/* `:not(.light)` rather than `.dark` so the palette is already resolved on the
+   very first paint, before React has had a chance to stamp the theme class. */
+html:not(.light) {
+  color-scheme: dark;
+
+  --c-slate-50: 248 250 252;
+  --c-slate-100: 241 245 249;
+  --c-slate-200: 226 232 240;
+  --c-slate-300: 203 213 225;
+  --c-slate-400: 148 163 184;
+  --c-slate-500: 100 116 139;
+  --c-slate-600: 71 85 105;
+  --c-slate-700: 51 65 85;
+  --c-slate-800: 30 41 59;
+  --c-slate-900: 15 23 42;
+  --c-slate-950: 2 6 23;
+
+  --c-amber-100: 254 243 199;
+  --c-amber-200: 253 230 138;
+  --c-amber-300: 252 211 77;
+  --c-amber-400: 251 191 36;
+  --c-amber-500: 245 158 11;
+  --c-amber-600: 217 119 6;
+  --c-amber-700: 180 83 9;
+  --c-amber-800: 146 64 14;
+  --c-amber-900: 120 53 15;
+
+  --c-yellow-100: 254 249 195;
+  --c-yellow-200: 254 240 138;
+  --c-yellow-300: 253 224 71;
+  --c-yellow-400: 250 204 21;
+  --c-yellow-500: 234 179 8;
+  --c-yellow-600: 202 138 4;
+  --c-yellow-700: 161 98 7;
+  --c-yellow-800: 133 77 14;
+  --c-yellow-900: 113 63 18;
+
+  --c-emerald-100: 209 250 229;
+  --c-emerald-200: 167 243 208;
+  --c-emerald-300: 110 231 183;
+  --c-emerald-400: 52 211 153;
+  --c-emerald-500: 16 185 129;
+  --c-emerald-600: 5 150 105;
+  --c-emerald-700: 4 120 87;
+  --c-emerald-800: 6 95 70;
+  --c-emerald-900: 6 78 59;
+
+  --c-indigo-100: 224 231 255;
+  --c-indigo-200: 199 210 254;
+  --c-indigo-300: 165 180 252;
+  --c-indigo-400: 129 140 248;
+  --c-indigo-500: 99 102 241;
+  --c-indigo-600: 79 70 229;
+  --c-indigo-700: 67 56 202;
+  --c-indigo-800: 55 48 163;
+  --c-indigo-900: 49 46 129;
+
+  --c-rose-100: 255 228 230;
+  --c-rose-200: 254 205 211;
+  --c-rose-300: 253 164 175;
+  --c-rose-400: 251 113 133;
+  --c-rose-500: 244 63 94;
+  --c-rose-600: 225 29 72;
+  --c-rose-700: 190 18 60;
+  --c-rose-800: 159 18 57;
+  --c-rose-900: 136 19 55;
+
+  --bg-primary: 3 7 18;
+  --bg-surface: 15 23 42 / 0.85;
+  --bg-card: 30 41 59 / 0.5;
+  --bg-input: 15 23 42 / 0.9;
+  --border-color: 255 255 255 / 0.08;
+  --shadow-ambient: 0 4px 20px -2px rgb(0 0 0 / 0.45);
+}
+
+html.light {
+  color-scheme: light;
+
+  /* Neutral ramp inverted: `bg-slate-950` becomes near-white, `text-slate-100`
+     becomes near-black, and every intermediate step keeps its contrast rank. */
+  --c-slate-50: 2 6 23;
+  --c-slate-100: 15 23 42;
+  --c-slate-200: 30 41 59;
+  --c-slate-300: 51 65 85;
+  --c-slate-400: 71 85 105;
+  --c-slate-500: 100 116 139;
+  --c-slate-600: 203 213 225;
+  --c-slate-700: 203 213 225;
+  --c-slate-800: 226 232 240;
+  --c-slate-900: 241 245 249;
+  --c-slate-950: 248 250 252;
+
+  /* Accent ramps darken so the light shades used as *text* keep AA contrast,
+     while the 500/600 shades used as tinted fills and borders stay put. */
+  --c-amber-100: 120 53 15;
+  --c-amber-200: 120 53 15;
+  --c-amber-300: 146 64 14;
+  --c-amber-400: 180 83 9;
+  --c-amber-500: 217 119 6;
+  --c-amber-600: 180 83 9;
+  --c-amber-700: 146 64 14;
+  --c-amber-800: 120 53 15;
+  --c-amber-900: 69 26 3;
+
+  --c-yellow-100: 113 63 18;
+  --c-yellow-200: 113 63 18;
+  --c-yellow-300: 133 77 14;
+  --c-yellow-400: 161 98 7;
+  --c-yellow-500: 202 138 4;
+  --c-yellow-600: 161 98 7;
+  --c-yellow-700: 133 77 14;
+  --c-yellow-800: 113 63 18;
+  --c-yellow-900: 66 32 6;
+
+  --c-emerald-100: 6 78 59;
+  --c-emerald-200: 6 78 59;
+  --c-emerald-300: 6 95 70;
+  --c-emerald-400: 4 120 87;
+  --c-emerald-500: 5 150 105;
+  --c-emerald-600: 4 120 87;
+  --c-emerald-700: 6 95 70;
+  --c-emerald-800: 6 78 59;
+  --c-emerald-900: 2 44 34;
+
+  --c-indigo-100: 49 46 129;
+  --c-indigo-200: 49 46 129;
+  --c-indigo-300: 55 48 163;
+  --c-indigo-400: 67 56 202;
+  --c-indigo-500: 79 70 229;
+  --c-indigo-600: 67 56 202;
+  --c-indigo-700: 55 48 163;
+  --c-indigo-800: 49 46 129;
+  --c-indigo-900: 30 27 75;
+
+  --c-rose-100: 136 19 55;
+  --c-rose-200: 136 19 55;
+  --c-rose-300: 159 18 57;
+  --c-rose-400: 190 18 60;
+  --c-rose-500: 225 29 72;
+  --c-rose-600: 190 18 60;
+  --c-rose-700: 159 18 57;
+  --c-rose-800: 136 19 55;
+  --c-rose-900: 76 5 25;
+
+  --bg-primary: 248 250 252;
+  --bg-surface: 255 255 255 / 0.9;
+  --bg-card: 241 245 249 / 0.8;
+  --bg-input: 255 255 255 / 1;
+  --border-color: 15 23 42 / 0.1;
+  --shadow-ambient: 0 4px 20px -2px rgb(15 23 42 / 0.08);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--c-slate-100));
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Theme switching suppresses transitions for one frame.
+ *
+ * Chrome does not re-resolve a *transitioned* property whose specified value is
+ * a `var()` substitution when that variable flips via a class swap on <html> —
+ * the specified value text never changes, so no transition is started and the
+ * element keeps painting its old colour. With the whole palette living in
+ * custom properties, that left body backgrounds and every `transition-colors`
+ * element stuck on the previous theme. AppContext adds this class, flips the
+ * theme, and removes it on the next frame.
+ */
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+  transition: none !important;
+}
+
+h1,
+h2,
+h3,
+.serif-font {
+  font-family: var(--font-serif);
+}
+
+.mono-font {
+  font-family: var(--font-mono);
+}
+
+/* The popup is a fixed-size surface; Chrome will not stretch it for us. */
+body.popup-shell {
+  min-width: 420px;
+  max-width: 500px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+/* Glassmorphism surfaces */
+.glass-panel {
+  background: rgb(var(--bg-surface));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgb(var(--border-color));
+  box-shadow: var(--shadow-ambient);
+}
+
+html:not(.light) .glass-panel-gold {
+  background: rgb(30 27 75 / 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgb(245 158 11 / 0.25);
+}
+
+html.light .glass-panel-gold {
+  background: rgb(254 243 199 / 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgb(217 119 6 / 0.3);
+}
+
+.glass-card {
+  background: rgb(var(--bg-card));
+  border: 1px solid rgb(var(--border-color));
+  transition: border-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.glass-card:hover {
+  border-color: rgb(245 158 11 / 0.4);
+  transform: translateY(-1px);
+}
+
+/* Inputs */
+.math-input {
+  background: rgb(var(--bg-input));
+  border: 1px solid rgb(var(--border-color));
+  color: rgb(var(--c-slate-100));
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-family: var(--font-mono);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.math-input:focus-visible {
+  border-color: rgb(245 158 11);
+  box-shadow: 0 0 0 2px rgb(245 158 11 / 0.25);
+}
+
+.math-input[aria-invalid='true'] {
+  border-color: rgb(244 63 94 / 0.7);
+}
+
+/* Keyboard focus ring for every interactive control */
+button:focus-visible,
+a:focus-visible,
+select:focus-visible {
+  outline: 2px solid rgb(245 158 11);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+/* Gradients */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #fde68a 0%, #f59e0b 50%, #d97706 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+html.light .gold-gradient-text {
+  background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #78350f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* KaTeX should inherit the surrounding colour rather than force its own */
+.katex {
+  color: inherit;
+  font-size: 1.05em;
+}
+
+/* Long derivations must scroll inside their card, never widen the popup */
+.katex-display {
+  margin: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 2px;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--c-slate-950));
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--c-slate-700));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--c-slate-600));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .glass-card:hover {
+    transform: none;
+  }
+}

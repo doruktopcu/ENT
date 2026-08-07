@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Vite / build caches
+.vite/
+*.local
+
+# Packaged extension artifacts
+*.zip
+*.crx
+*.pem
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Editors
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python (ent.py tooling)
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+venv/
+.venv/
+
+# NOTE: dist/ is intentionally tracked — the README tells users they can
+# "Load unpacked" the committed dist/ folder without running a build.
+# If you switch to release-only artifacts, add `dist/` here.
