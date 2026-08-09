@@ -5,7 +5,7 @@ import { AppProvider, useApp } from './context/AppContext';
 import { DEFAULT_TOPIC_ID, TOPICS } from './config/topics';
 
 import SearchHeader from './components/SearchHeader';
-import ProfessorAssistant from './components/ProfessorAssistant';
+import LectureNotes from './components/LectureNotes';
 import SettingsPage from './components/SettingsPage';
 import HistoryTab from './components/HistoryTab';
 import CustomFormulaWorkbench from './components/CustomFormulaWorkbench';
@@ -102,7 +102,7 @@ function MainAppShell() {
 
       <SearchHeader topics={TOPICS} onSelectTopic={handleSelectTopicFromSearch} />
 
-      <ProfessorAssistant activeTopic={activeTopic} />
+      <LectureNotes activeTopic={activeTopic} />
 
       <main>
         {activeTab === 'solvers' ? (

@@ -1,4 +1,4 @@
-# Prof. Euler's Elementary Number Theory (ENT) Lab
+# Elementary Number Theory (ENT) Lab
 
 [![Manifest V3](https://img.shields.io/badge/Chrome_Extension-Manifest_V3-amber.svg)](https://developer.chrome.com/docs/extensions/mv3/intro/)
 [![React 18](https://img.shields.io/badge/Framework-React_18-indigo.svg)](https://react.dev/)
@@ -31,7 +31,7 @@ All arithmetic is arbitrary-precision. Each solver shows its derivation, not jus
 
 ### Beyond the solvers
 
-- **Prof. Euler's lecture notes** — intuition, the formal theorem, and historical context for
+- **Lecture notes** — intuition, the formal theorem, and historical context for
   every topic, in both languages.
 - **Formula workbench** — sweep a range and watch a sequence behave: perfect-square generators,
   a Fermat primality scan that explicitly flags pseudoprimes, and a modular multiplication sweep.

@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Prof. Euler's Number Theory Lab",
+  "name": "Number Theory Lab",
   "version": "1.0.0",
-  "description": "Master Elementary Number Theory with interactive solvers, custom formula workbench, step-by-step proofs, and topic search.",
+  "description": "Interactive solvers, step-by-step derivations, and a theory guide for elementary number theory.",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Prof. Euler's ENT Lab",
+    "default_title": "Number Theory Lab",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

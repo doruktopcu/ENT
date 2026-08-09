@@ -14,7 +14,7 @@ export const SUPPORTED_LANGUAGES = ['en', 'tr'];
 
 export const translations = {
   en: {
-    appTitle: "Prof. Euler's Number Theory Lab",
+    appTitle: "Number Theory Lab",
     appSubtitle: 'Interactive solvers, derivations, custom workbench and a theory guide',
     labFullView: 'Full Lab View',
     labFullViewTitle: 'Open in a full browser tab',
@@ -23,7 +23,7 @@ export const translations = {
     clearSearch: 'Clear search',
     noSearchResults: 'No topic matches “{query}”.',
     solverListHeading: 'Solvers ({count})',
-    footerTagline: "Prof. Euler AI • Elementary Number Theory • v{version}",
+    footerTagline: "Elementary Number Theory Lab • v{version}",
 
     nav: {
       sections: 'Lab sections',
@@ -38,8 +38,8 @@ export const translations = {
       settings: 'Settings',
     },
 
-    professor: {
-      title: "Prof. Euler's Lecture Notes",
+    notes: {
+      title: "Lecture Notes",
       subtitle: 'Intuition, formal statements and historical background',
       showNotes: 'Show notes',
       hideNotes: 'Hide notes',
@@ -505,7 +505,7 @@ export const translations = {
   },
 
   tr: {
-    appTitle: 'Prof. Euler Sayılar Teorisi Laboratuvarı',
+    appTitle: 'Sayılar Teorisi Laboratuvarı',
     appSubtitle: 'Etkileşimli çözücüler, çıkarımlar, özel formül tezgâhı ve teori rehberi',
     labFullView: 'Tam Ekran Laboratuvar',
     labFullViewTitle: 'Yeni bir tarayıcı sekmesinde aç',
@@ -515,7 +515,7 @@ export const translations = {
     clearSearch: 'Aramayı temizle',
     noSearchResults: '“{query}” ile eşleşen konu yok.',
     solverListHeading: 'Çözücüler ({count})',
-    footerTagline: 'Prof. Euler AI • Temel Sayılar Teorisi • s{version}',
+    footerTagline: 'Temel Sayılar Teorisi Laboratuvarı • s{version}',
 
     nav: {
       sections: 'Laboratuvar bölümleri',
@@ -530,8 +530,8 @@ export const translations = {
       settings: 'Ayarlar',
     },
 
-    professor: {
-      title: "Prof. Euler'in Ders Notları",
+    notes: {
+      title: "Ders Notları",
       subtitle: 'Sezgi, formal ifadeler ve tarihsel arka plan',
       showNotes: 'Notları göster',
       hideNotes: 'Notları gizle',

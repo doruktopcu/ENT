@@ -4,9 +4,9 @@ import MathRender from './MathRender';
 import { useApp } from '../context/AppContext';
 
 const NOTE_TABS = [
-  { id: 'pedagogy', labelKey: 'professor.intuition', Icon: Lightbulb },
-  { id: 'theorem', labelKey: 'professor.theorem', Icon: CheckCircle2 },
-  { id: 'history', labelKey: 'professor.history', Icon: HelpCircle },
+  { id: 'pedagogy', labelKey: 'notes.intuition', Icon: Lightbulb },
+  { id: 'theorem', labelKey: 'notes.theorem', Icon: CheckCircle2 },
+  { id: 'history', labelKey: 'notes.history', Icon: HelpCircle },
 ];
 
 /**
@@ -14,7 +14,7 @@ const NOTE_TABS = [
  * component, so the Turkish UI silently fell back to English prose. They now
  * come from the translation tree like everything else.
  */
-export default function ProfessorAssistant({ activeTopic }) {
+export default function LectureNotes({ activeTopic }) {
   const { t } = useApp();
   const [showNotes, setShowNotes] = useState(true);
   const [activeNote, setActiveNote] = useState('pedagogy');
@@ -36,13 +36,13 @@ export default function ProfessorAssistant({ activeTopic }) {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-base font-bold text-amber-200 serif-font">
-                {t('professor.title')}
+                {t('notes.title')}
               </h2>
               <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
                 {t(`topics.${topicId}.title`)}
               </span>
             </div>
-            <p className="text-xs text-slate-400">{t('professor.subtitle')}</p>
+            <p className="text-xs text-slate-400">{t('notes.subtitle')}</p>
           </div>
         </div>
 
@@ -52,7 +52,7 @@ export default function ProfessorAssistant({ activeTopic }) {
           aria-expanded={showNotes}
           className="text-xs text-amber-400 hover:text-amber-300 transition-colors shrink-0 font-medium"
         >
-          {showNotes ? t('professor.hideNotes') : t('professor.showNotes')}
+          {showNotes ? t('notes.hideNotes') : t('notes.showNotes')}
         </button>
       </div>
 
