@@ -10,7 +10,7 @@ const TABS = [
 ];
 
 export default function SearchHeader({ topics, onSelectTopic }) {
-  const { activeTab, setActiveTab, setIsSettingsOpen, t } = useApp();
+  const { activeTab, setActiveTab, t } = useApp();
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
@@ -148,8 +148,13 @@ export default function SearchHeader({ topics, onSelectTopic }) {
           ))}
           <button
             type="button"
-            onClick={() => setIsSettingsOpen(true)}
-            className="p-1.5 text-slate-400 hover:text-amber-300 transition-colors ml-1"
+            onClick={() => setActiveTab('settings')}
+            aria-current={activeTab === 'settings' ? 'page' : undefined}
+            className={`p-1.5 rounded-lg transition-colors ml-1 ${
+              activeTab === 'settings'
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                : 'text-slate-400 hover:text-amber-300 border border-transparent'
+            }`}
             aria-label={t('tabs.settings')}
             title={t('tabs.settings')}
           >

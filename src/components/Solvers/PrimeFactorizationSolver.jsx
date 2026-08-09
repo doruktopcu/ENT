@@ -3,7 +3,7 @@ import { Grid3x3, Hash, PieChart, ShieldCheck, Sigma } from 'lucide-react';
 import { divisorsOf, primeFactorization } from '../../utils/numberTheoryEngine';
 import MathRender from '../MathRender';
 import { useApp } from '../../context/AppContext';
-import { useSolverState } from '../../hooks/useSolverState';
+import { useAutoSaveHistory, useSolverState } from '../../hooks/useSolverState';
 import {
   EngineMessage,
   IntegerField,
@@ -14,22 +14,20 @@ import {
 const DIVISOR_DISPLAY_LIMIT = 200;
 
 export default function PrimeFactorizationSolver() {
-  const { t } = useApp();
+  const { engine, t } = useApp();
   const { values, setValue, save, justSaved } = useSolverState('prime_factor', { n: '24000' });
   const { n } = values;
 
-  const result = useMemo(() => primeFactorization(n), [n]);
+  const result = useMemo(() => primeFactorization(n, engine.factorisation), [n, engine.factorisation]);
   const divisors = useMemo(
-    () => (result.ok ? divisorsOf(n, DIVISOR_DISPLAY_LIMIT) : { ok: false }),
-    [n, result.ok]
+    () => (result.ok ? divisorsOf(n, DIVISOR_DISPLAY_LIMIT, engine.factorisation) : { ok: false }),
+    [n, result.ok, engine.factorisation]
   );
 
-  const handleSave = () => {
-    if (!result.ok) return;
-    save(
-      `${result.n} = ${result.factorString}, \\quad \\tau = ${result.tau}, \\quad \\sigma = ${result.sigma}, \\quad \\mu = ${result.mobius}`
-    );
-  };
+  const summary = result.ok
+    ? `${result.n} = ${result.factorString}, \\quad \\tau = ${result.tau}, \\quad \\sigma = ${result.sigma}, \\quad \\mu = ${result.mobius}`
+    : null;
+  useAutoSaveHistory('prime_factor', values, summary);
 
   return (
     <div className="space-y-6">
@@ -45,7 +43,7 @@ export default function PrimeFactorizationSolver() {
         />
 
         <div className="flex justify-end">
-          <SaveToHistoryButton onSave={handleSave} justSaved={justSaved} disabled={!result.ok} />
+          <SaveToHistoryButton onSave={() => save(summary)} justSaved={justSaved} disabled={!summary} />
         </div>
       </div>
 

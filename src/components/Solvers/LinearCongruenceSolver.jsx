@@ -3,7 +3,7 @@ import { CheckCircle } from 'lucide-react';
 import { parseBigInt, solveLinearCongruence } from '../../utils/numberTheoryEngine';
 import MathRender from '../MathRender';
 import { useApp } from '../../context/AppContext';
-import { useSolverState } from '../../hooks/useSolverState';
+import { useAutoSaveHistory, useSolverState } from '../../hooks/useSolverState';
 import {
   EngineMessage,
   IntegerField,
@@ -28,17 +28,18 @@ export default function LinearCongruenceSolver() {
   const result = useMemo(() => solveLinearCongruence(a, b, m), [a, b, m]);
   const inputsValid = parsed.a !== null && parsed.b !== null && parsed.m !== null;
 
-  const handleSave = () => {
+  const summary = useMemo(() => {
+    if (!inputsValid) return null;
+
     const equation = `${a}x \\equiv ${b} \\pmod{${m}}`;
-    if (!result.hasSolution) {
-      save(`${equation} \\implies \\varnothing`);
-      return;
-    }
+    if (!result.hasSolution) return `${equation} \\implies \\varnothing`;
 
     const shown = result.incongruentSolutions.slice(0, 4).join(', ');
     const suffix = result.incongruentSolutions.length > 4 ? ', \\dots' : '';
-    save(`${equation} \\implies x \\in \\{${shown}${suffix}\\}`);
-  };
+    return `${equation} \\implies x \\in \\{${shown}${suffix}\\}`;
+  }, [a, b, m, inputsValid, result]);
+
+  useAutoSaveHistory('linear_congruence', values, summary);
 
   return (
     <div className="space-y-6">
@@ -76,7 +77,7 @@ export default function LinearCongruenceSolver() {
         )}
 
         <div className="flex justify-end">
-          <SaveToHistoryButton onSave={handleSave} justSaved={justSaved} disabled={!inputsValid} />
+          <SaveToHistoryButton onSave={() => save(summary)} justSaved={justSaved} disabled={!summary} />
         </div>
       </div>
 

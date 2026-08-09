@@ -187,20 +187,64 @@ export const translations = {
     },
 
     settings: {
-      title: 'Lab settings',
-      subtitle: 'Interface language, colour theme and stored data.',
+      title: 'Settings',
+      subtitle: 'Appearance, computation limits, startup behaviour and stored data.',
+
+      appearance: 'Appearance',
+      appearanceHelp: 'How the lab looks and which language it speaks.',
       language: 'Language',
-      languageHelp: 'Choose the interface language.',
+      languageHelp: 'Applies to every solver, lecture note and guide entry.',
       theme: 'Theme',
-      themeHelp: 'Pick an appearance or follow your system setting.',
+      themeHelp: 'Pick an appearance, or follow your operating system.',
       dark: 'Dark',
       light: 'Light',
       system: 'System',
-      storage: 'Stored data',
-      clearStorage: 'Clear preferences & history',
-      confirmClearStorage: 'Reset language, theme and delete all saved calculations?',
-      close: 'Close',
-      closeAria: 'Close settings',
+
+      computation: 'Computation limits',
+      computationHelp:
+        'The lab computes as you type, so these caps stop a large input from freezing the window. Raising them trades responsiveness for reach.',
+      residuePreviewLimit: 'Residue preview limit',
+      residuePreviewLimitHelp:
+        'How many residues to list for the totient solver before truncating the preview.',
+      polynomialScanLimit: 'Polynomial scan limit',
+      polynomialScanLimitHelp:
+        'How far to search for roots of f(x) = b (mod m) when the modulus is large.',
+      factorisationBudget: 'Factorisation budget',
+      factorisationBudgetHelp:
+        'Trial-division candidates to try before giving up. Primes are still detected instantly regardless of this value.',
+
+      startup: 'Startup',
+      startupHelp: 'What the lab shows when you open it.',
+      startupTab: 'Open on tab',
+      startupSolver: 'Default solver',
+
+      historySection: 'History',
+      historySectionHelp: 'How calculations get recorded.',
+      historyLimit: 'Entries kept',
+      historyLimitHelp: 'The oldest entries are dropped once the limit is reached.',
+      saveMode: 'Saving',
+      saveModeHelp:
+        'Automatic saving records a calculation once the inputs stop changing, rather than on every keystroke.',
+      saveManual: 'Manual',
+      saveAuto: 'Automatic',
+
+      data: 'Data',
+      dataHelp: 'Everything is stored locally in this browser and is never uploaded.',
+      storageUsed: 'Storage used',
+      entriesSaved: 'Entries saved',
+      exportHistory: 'Export history',
+      importHistory: 'Import history',
+      exportDone: 'Exported {count} entries.',
+      importDone: 'Imported {added} new entries out of {total}.',
+      importInvalidJson: 'That file is not valid JSON.',
+      importUnrecognised: 'That file does not look like an exported history.',
+      importNoEntries: 'No usable entries were found in that file.',
+      historyCleared: 'History cleared.',
+      restoreDefaults: 'Restore defaults',
+      resetEverything: 'Reset everything',
+      confirmResetEverything:
+        'Reset language, theme and every setting, and delete all saved calculations?',
+      resetDone: 'Everything has been reset.',
     },
 
     topics: {
@@ -634,21 +678,64 @@ export const translations = {
     },
 
     settings: {
-      title: 'Laboratuvar ayarları',
-      subtitle: 'Arayüz dili, renk teması ve saklanan veriler.',
+      title: 'Ayarlar',
+      subtitle: 'Görünüm, hesaplama sınırları, açılış davranışı ve saklanan veriler.',
+
+      appearance: 'Görünüm',
+      appearanceHelp: 'Laboratuvarın görünüşü ve arayüz dili.',
       language: 'Arayüz dili',
-      languageHelp: 'Arayüz dilini seçin.',
+      languageHelp: 'Tüm çözücüler, ders notları ve rehber kayıtları için geçerlidir.',
       theme: 'Tema',
-      themeHelp: 'Bir görünüm seçin veya sistem ayarınızı izleyin.',
+      themeHelp: 'Bir görünüm seçin veya işletim sisteminizi izleyin.',
       dark: 'Karanlık',
       light: 'Aydınlık',
       system: 'Sistem',
-      storage: 'Saklanan veriler',
-      clearStorage: 'Tercihleri ve geçmişi temizle',
-      confirmClearStorage:
-        'Dil ve tema sıfırlansın, kayıtlı tüm hesaplamalar silinsin mi?',
-      close: 'Kapat',
-      closeAria: 'Ayarları kapat',
+
+      computation: 'Hesaplama sınırları',
+      computationHelp:
+        'Laboratuvar siz yazarken hesaplar; bu sınırlar büyük girdilerin pencereyi dondurmasını önler. Sınırı yükseltmek erişimi artırır ama akıcılığı azaltır.',
+      residuePreviewLimit: 'Kalan önizleme sınırı',
+      residuePreviewLimitHelp:
+        'Euler fonksiyonu çözücüsünde önizleme kısaltılmadan önce kaç kalanın listeleneceği.',
+      polynomialScanLimit: 'Polinom tarama sınırı',
+      polynomialScanLimitHelp:
+        'Modül büyük olduğunda f(x) = b (mod m) köklerinin ne kadar ileriye kadar aranacağı.',
+      factorisationBudget: 'Çarpanlara ayırma bütçesi',
+      factorisationBudgetHelp:
+        'Vazgeçmeden önce denenecek bölen adayı sayısı. Bu değerden bağımsız olarak asal sayılar yine de anında saptanır.',
+
+      startup: 'Açılış',
+      startupHelp: 'Laboratuvarı açtığınızda ne görüneceği.',
+      startupTab: 'Açılışta gösterilecek sekme',
+      startupSolver: 'Varsayılan çözücü',
+
+      historySection: 'Geçmiş',
+      historySectionHelp: 'Hesaplamaların nasıl kaydedileceği.',
+      historyLimit: 'Saklanacak kayıt sayısı',
+      historyLimitHelp: 'Sınıra ulaşıldığında en eski kayıtlar silinir.',
+      saveMode: 'Kaydetme',
+      saveModeHelp:
+        'Otomatik kaydetme, her tuş vuruşunda değil, girdiler değişmeyi bıraktığında hesaplamayı kaydeder.',
+      saveManual: 'Elle',
+      saveAuto: 'Otomatik',
+
+      data: 'Veriler',
+      dataHelp: 'Her şey bu tarayıcıda yerel olarak saklanır ve hiçbir yere gönderilmez.',
+      storageUsed: 'Kullanılan alan',
+      entriesSaved: 'Kayıt sayısı',
+      exportHistory: 'Geçmişi dışa aktar',
+      importHistory: 'Geçmişi içe aktar',
+      exportDone: '{count} kayıt dışa aktarıldı.',
+      importDone: '{total} kaydın {added} tanesi yeni olarak içe aktarıldı.',
+      importInvalidJson: 'Bu dosya geçerli bir JSON değil.',
+      importUnrecognised: 'Bu dosya dışa aktarılmış bir geçmişe benzemiyor.',
+      importNoEntries: 'Bu dosyada kullanılabilir kayıt bulunamadı.',
+      historyCleared: 'Geçmiş temizlendi.',
+      restoreDefaults: 'Varsayılanlara dön',
+      resetEverything: 'Her şeyi sıfırla',
+      confirmResetEverything:
+        'Dil, tema ve tüm ayarlar sıfırlansın, kayıtlı hesaplamaların tamamı silinsin mi?',
+      resetDone: 'Her şey sıfırlandı.',
     },
 
     topics: {

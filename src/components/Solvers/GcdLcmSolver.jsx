@@ -3,7 +3,7 @@ import { FileText } from 'lucide-react';
 import { extGCD, lcm, parseBigInt } from '../../utils/numberTheoryEngine';
 import MathRender from '../MathRender';
 import { useApp } from '../../context/AppContext';
-import { useSolverState } from '../../hooks/useSolverState';
+import { useAutoSaveHistory, useSolverState } from '../../hooks/useSolverState';
 import {
   EngineMessage,
   IntegerField,
@@ -25,12 +25,10 @@ export default function GcdLcmSolver() {
     return { ok: true, ext: extGCD(parsedA, parsedB), lcmResult: lcm(parsedA, parsedB) };
   }, [a, b]);
 
-  const handleSave = () => {
-    if (!result.ok) return;
-    save(
-      `\\gcd(${a}, ${b}) = ${result.ext.gcd}, \\quad \\operatorname{lcm}(${a}, ${b}) = ${result.lcmResult.lcm}`
-    );
-  };
+  const summary = result.ok
+    ? `\\gcd(${a}, ${b}) = ${result.ext.gcd}, \\quad \\operatorname{lcm}(${a}, ${b}) = ${result.lcmResult.lcm}`
+    : null;
+  useAutoSaveHistory('gcd_lcm', values, summary);
 
   return (
     <div className="space-y-6">
@@ -55,7 +53,7 @@ export default function GcdLcmSolver() {
         </div>
 
         <div className="flex justify-end">
-          <SaveToHistoryButton onSave={handleSave} justSaved={justSaved} disabled={!result.ok} />
+          <SaveToHistoryButton onSave={() => save(summary)} justSaved={justSaved} disabled={!summary} />
         </div>
       </div>
 

@@ -3,7 +3,7 @@ import { CheckCircle, Plus, Trash2 } from 'lucide-react';
 import { parseBigInt, solveCRT } from '../../utils/numberTheoryEngine';
 import MathRender from '../MathRender';
 import { useApp } from '../../context/AppContext';
-import { useSolverState } from '../../hooks/useSolverState';
+import { useAutoSaveHistory, useSolverState } from '../../hooks/useSolverState';
 import {
   EngineMessage,
   SaveToHistoryButton,
@@ -52,9 +52,8 @@ export default function ChineseRemainderSolver() {
 
   const result = useMemo(() => solveCRT(congruences), [congruences]);
 
-  const handleSave = () => {
-    save(result.hasSolution ? result.solutionString : 'x \\in \\varnothing');
-  };
+  const summary = result.hasSolution ? result.solutionString : 'x \\in \\varnothing';
+  useAutoSaveHistory('crt', values, summary);
 
   return (
     <div className="space-y-6">
@@ -125,7 +124,7 @@ export default function ChineseRemainderSolver() {
             {t('solvers.addCongruence')}
           </button>
 
-          <SaveToHistoryButton onSave={handleSave} justSaved={justSaved} />
+          <SaveToHistoryButton onSave={() => save(summary)} justSaved={justSaved} />
         </div>
       </div>
 

@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react';
 import { SUPPORTED_LANGUAGES, translations } from '../i18n/translations';
+import { DEFAULT_SETTINGS, engineOptions, normaliseSettings } from '../config/settings';
 
 const AppContext = createContext(null);
 
@@ -15,9 +16,8 @@ const STORAGE_KEYS = {
   language: 'ent_language',
   theme: 'ent_theme',
   history: 'ent_history',
+  settings: 'ent_settings',
 };
-
-const MAX_HISTORY_ITEMS = 50;
 
 /** localStorage throws in some embedded contexts; never let that break the app. */
 const safeRead = (key) => {
@@ -33,6 +33,23 @@ const safeWrite = (key, value) => {
     window.localStorage.setItem(key, value);
   } catch {
     /* Storage is full or blocked — preferences simply will not persist. */
+  }
+};
+
+const safeRemove = (key) => {
+  try {
+    window.localStorage.removeItem(key);
+  } catch {
+    /* Nothing to do. */
+  }
+};
+
+const readJson = (key, fallback) => {
+  try {
+    const raw = safeRead(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
   }
 };
 
@@ -57,18 +74,18 @@ export function AppProvider({ children }) {
     return ['dark', 'light', 'system'].includes(saved) ? saved : 'system';
   });
 
-  const [activeTab, setActiveTab] = useState('solvers');
-  const [selectedTopicId, setSelectedTopicId] = useState('gcd_lcm');
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settings, setSettings] = useState(() =>
+    normaliseSettings(readJson(STORAGE_KEYS.settings, DEFAULT_SETTINGS))
+  );
+
+  // Startup preferences only seed the initial state; changing them later must
+  // not yank the user out of whatever they are currently doing.
+  const [activeTab, setActiveTab] = useState(() => settings.startupTab);
+  const [selectedTopicId, setSelectedTopicId] = useState(() => settings.startupSolver);
 
   const [history, setHistory] = useState(() => {
-    try {
-      const saved = safeRead(STORAGE_KEYS.history);
-      const parsed = saved ? JSON.parse(saved) : [];
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
+    const parsed = readJson(STORAGE_KEYS.history, []);
+    return Array.isArray(parsed) ? parsed : [];
   });
 
   // Scoped to a topic so loading a GCD problem cannot bleed into another solver.
@@ -122,12 +139,21 @@ export function AppProvider({ children }) {
   }, [theme]);
 
   useEffect(() => {
+    safeWrite(STORAGE_KEYS.settings, JSON.stringify(settings));
+  }, [settings]);
+
+  useEffect(() => {
     try {
       safeWrite(STORAGE_KEYS.history, JSON.stringify(history));
     } catch {
       /* A history entry that cannot be serialised is not worth crashing over. */
     }
   }, [history]);
+
+  // Lowering the cap should take effect immediately, not at the next save.
+  useEffect(() => {
+    setHistory((prev) => (prev.length > settings.historyLimit ? prev.slice(0, settings.historyLimit) : prev));
+  }, [settings.historyLimit]);
 
   /**
    * Translate `path`, filling `{name}` placeholders from `vars`.
@@ -148,6 +174,9 @@ export function AppProvider({ children }) {
     },
     [language]
   );
+
+  const historyLimitRef = useRef(settings.historyLimit);
+  historyLimitRef.current = settings.historyLimit;
 
   /**
    * Append a calculation to the log.
@@ -180,7 +209,7 @@ export function AppProvider({ children }) {
         prev.length > 0 ? JSON.stringify({ topicId: prev[0].topicId, inputs: prev[0].inputs }) : null;
 
       if (previousSignature === signature) return [entry, ...prev.slice(1)];
-      return [entry, ...prev].slice(0, MAX_HISTORY_ITEMS);
+      return [entry, ...prev].slice(0, historyLimitRef.current);
     });
   }, []);
 
@@ -209,11 +238,97 @@ export function AppProvider({ children }) {
     return pending.inputs;
   }, []);
 
-  const resetPreferences = useCallback(() => {
+  const updateSetting = useCallback((key, value) => {
+    // `prev` is the fallback, so an unusable value keeps the current setting
+    // instead of snapping back to the factory default.
+    setSettings((prev) => normaliseSettings({ ...prev, [key]: value }, prev));
+  }, []);
+
+  const resetSettings = useCallback(() => setSettings({ ...DEFAULT_SETTINGS }), []);
+
+  const resetEverything = useCallback(() => {
     setHistory([]);
+    setSettings({ ...DEFAULT_SETTINGS });
     setLanguage('en');
     setTheme('system');
+    safeRemove(STORAGE_KEYS.history);
+    safeRemove(STORAGE_KEYS.settings);
   }, []);
+
+  /** Serialise history for download. */
+  const exportHistory = useCallback(
+    () =>
+      JSON.stringify(
+        { format: 'ent-lab-history', version: 1, exportedAt: new Date().toISOString(), history },
+        null,
+        2
+      ),
+    [history]
+  );
+
+  /**
+   * Merge an exported file back in. Returns a result object rather than
+   * throwing so the settings page can show a precise message.
+   */
+  const importHistory = useCallback((rawJson) => {
+    let parsed;
+    try {
+      parsed = JSON.parse(rawJson);
+    } catch {
+      return { ok: false, code: 'importInvalidJson' };
+    }
+
+    const incoming = Array.isArray(parsed) ? parsed : parsed?.history;
+    if (!Array.isArray(incoming)) return { ok: false, code: 'importUnrecognised' };
+
+    const valid = incoming.filter(
+      (item) =>
+        item &&
+        typeof item.topicId === 'string' &&
+        typeof item.summaryResult === 'string' &&
+        item.inputs &&
+        typeof item.inputs === 'object'
+    );
+
+    if (valid.length === 0) return { ok: false, code: 'importNoEntries' };
+
+    let added = 0;
+    setHistory((prev) => {
+      const seen = new Set(prev.map((item) => item.id));
+      const fresh = valid
+        .map((item) => ({
+          ...item,
+          id: seen.has(item.id) ? `${item.id}-${Math.random().toString(36).slice(2, 8)}` : item.id,
+        }))
+        .filter((item) => !seen.has(item.id));
+
+      added = fresh.length;
+      return [...fresh, ...prev].slice(0, historyLimitRef.current);
+    });
+
+    return { ok: true, imported: valid.length, added };
+  }, []);
+
+  /**
+   * Approximate bytes this extension occupies in localStorage.
+   *
+   * Measured from state rather than by reading storage back: the values below
+   * are exactly what the persistence effects write, and deriving it this way
+   * keeps the dependency list honest instead of decorative.
+   */
+  const storageUsage = useMemo(() => {
+    const written = [
+      [STORAGE_KEYS.language, language],
+      [STORAGE_KEYS.theme, theme],
+      [STORAGE_KEYS.settings, JSON.stringify(settings)],
+      [STORAGE_KEYS.history, JSON.stringify(history)],
+    ];
+
+    // UTF-16 code units, so two bytes each.
+    return written.reduce((total, [key, value]) => total + key.length + (value?.length ?? 0), 0) * 2;
+  }, [language, theme, settings, history]);
+
+  const options = useMemo(() => engineOptions(settings), [settings]);
 
   const value = useMemo(
     () => ({
@@ -221,36 +336,47 @@ export function AppProvider({ children }) {
       setLanguage,
       theme,
       setTheme,
+      settings,
+      updateSetting,
+      resetSettings,
+      resetEverything,
+      engine: options,
       activeTab,
       setActiveTab,
       selectedTopicId,
       setSelectedTopicId,
-      isSettingsOpen,
-      setIsSettingsOpen,
       history,
       addHistoryItem,
       clearHistory,
       deleteHistoryItem,
       loadHistoryItemToSolver,
+      exportHistory,
+      importHistory,
+      storageUsage,
       presetInputs,
       consumePresetInputs,
-      resetPreferences,
       t,
     }),
     [
       language,
       theme,
+      settings,
+      updateSetting,
+      resetSettings,
+      resetEverything,
+      options,
       activeTab,
       selectedTopicId,
-      isSettingsOpen,
       history,
       addHistoryItem,
       clearHistory,
       deleteHistoryItem,
       loadHistoryItemToSolver,
+      exportHistory,
+      importHistory,
+      storageUsage,
       presetInputs,
       consumePresetInputs,
-      resetPreferences,
       t,
     ]
   );

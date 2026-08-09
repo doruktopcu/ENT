@@ -278,7 +278,7 @@ export function isPrime(value) {
  * Trial division is capped by FACTORISATION_BUDGET so pasting a 20-digit
  * semiprime degrades to "could not finish" instead of hanging the popup.
  */
-export function primeFactorization(value) {
+export function primeFactorization(value, { budget = FACTORISATION_BUDGET } = {}) {
   const parsed = parseBigInt(value);
   if (parsed === null) return { ok: false, code: 'invalidInput' };
 
@@ -323,7 +323,7 @@ export function primeFactorization(value) {
   }
 
   for (let d = 3n; temp > 1n && d * d <= temp; d += 2n) {
-    if (d > FACTORISATION_BUDGET) {
+    if (d > budget) {
       complete = false;
       break;
     }
@@ -388,15 +388,15 @@ export function primeFactorization(value) {
 }
 
 /** Möbius function μ(n): 0 if n is not squarefree, else (-1)^(number of primes). */
-export function mobius(value) {
-  const factorisation = primeFactorization(value);
+export function mobius(value, options) {
+  const factorisation = primeFactorization(value, options);
   if (!factorisation.ok) return { ok: false, code: factorisation.code };
   return { ok: true, value: factorisation.mobius, isSquarefree: factorisation.mobius !== 0n };
 }
 
 /** All positive divisors of n, ascending. Capped for display sanity. */
-export function divisorsOf(value, limit = 512) {
-  const factorisation = primeFactorization(value);
+export function divisorsOf(value, limit = 512, options) {
+  const factorisation = primeFactorization(value, options);
   if (!factorisation.ok) return { ok: false, code: factorisation.code };
 
   let divisors = [1n];
@@ -562,7 +562,10 @@ export function solveLinearCongruence(aRaw, bRaw, mRaw) {
 }
 
 /** Euler's totient φ(n), with complete and reduced residue systems. */
-export function computeEulerPhi(value) {
+export function computeEulerPhi(
+  value,
+  { previewLimit = RESIDUE_PREVIEW_LIMIT, budget } = {}
+) {
   const parsed = parseBigInt(value);
   if (parsed === null) return { ok: false, code: 'invalidInput' };
 
@@ -583,7 +586,7 @@ export function computeEulerPhi(value) {
     };
   }
 
-  const factorisation = primeFactorization(n);
+  const factorisation = primeFactorization(n, { budget });
   if (!factorisation.ok) return { ok: false, code: factorisation.code };
 
   let phi = n;
@@ -592,12 +595,13 @@ export function computeEulerPhi(value) {
   }
 
   // Enumerating residues is O(n); only preview a prefix for large n.
-  const truncated = n > RESIDUE_PREVIEW_LIMIT;
-  const previewLimit = truncated ? RESIDUE_PREVIEW_LIMIT : n;
+  const previewWindow = previewLimit > 0n ? previewLimit : RESIDUE_PREVIEW_LIMIT;
+  const truncated = n > previewWindow;
+  const shownLimit = truncated ? previewWindow : n;
 
   const crs = [];
   const rrs = [];
-  for (let i = 0n; i < previewLimit; i += 1n) {
+  for (let i = 0n; i < shownLimit; i += 1n) {
     crs.push(i);
     if (gcd(i, n).gcd === 1n) rrs.push(i);
   }
@@ -614,13 +618,18 @@ export function computeEulerPhi(value) {
     crs,
     rrs,
     truncated,
-    previewLimit,
+    previewLimit: shownLimit,
     formula: `\\varphi(${n}) = ${n} ${productTerms} = ${phi}`,
   };
 }
 
 /** Roots of a₅x⁵ + … + a₀ ≡ b (mod m); `coeffs[i]` is the coefficient of xⁱ. */
-export function solveModularPolynomial(coeffs, bRaw, mRaw) {
+export function solveModularPolynomial(
+  coeffs,
+  bRaw,
+  mRaw,
+  { scanLimit: requestedScan = POLYNOMIAL_SCAN_LIMIT } = {}
+) {
   const m = parseBigInt(mRaw);
   const b = parseBigInt(bRaw);
 
@@ -633,8 +642,9 @@ export function solveModularPolynomial(coeffs, bRaw, mRaw) {
   const reduced = parsedCoeffs.map((c) => mod(c, m));
   const target = mod(b, m);
 
-  const truncated = m > POLYNOMIAL_SCAN_LIMIT;
-  const scanLimit = truncated ? POLYNOMIAL_SCAN_LIMIT : m;
+  const scanWindow = requestedScan > 0n ? requestedScan : POLYNOMIAL_SCAN_LIMIT;
+  const truncated = m > scanWindow;
+  const scanLimit = truncated ? scanWindow : m;
 
   const roots = [];
   const evaluations = [];
@@ -729,7 +739,7 @@ export function solveCRT(items) {
  * the old linear loop needed φ(m) iterations (hanging the UI for large m) and
  * returned φ(m)+1 for m = 1, where every element is already the identity.
  */
-export function findOrder(aRaw, mRaw) {
+export function findOrder(aRaw, mRaw, { budget } = {}) {
   const a = parseBigInt(aRaw);
   const m = parseBigInt(mRaw);
 
@@ -742,11 +752,11 @@ export function findOrder(aRaw, mRaw) {
     return { exists: false, code: 'orderRequiresCoprime', vars: { a, m, gcd: d } };
   }
 
-  const phiResult = computeEulerPhi(m);
+  const phiResult = computeEulerPhi(m, { budget });
   if (!phiResult.ok) return { exists: false, code: phiResult.code };
 
   const phi = phiResult.phi;
-  const divisorResult = divisorsOf(phi, Number.MAX_SAFE_INTEGER);
+  const divisorResult = divisorsOf(phi, Number.MAX_SAFE_INTEGER, { budget });
   if (!divisorResult.ok) return { exists: false, code: divisorResult.code };
 
   const base = mod(a, m);

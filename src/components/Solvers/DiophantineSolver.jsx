@@ -3,7 +3,7 @@ import { CheckCircle, Table } from 'lucide-react';
 import { parseBigInt, solveDiophantine } from '../../utils/numberTheoryEngine';
 import MathRender from '../MathRender';
 import { useApp } from '../../context/AppContext';
-import { useSolverState } from '../../hooks/useSolverState';
+import { useAutoSaveHistory, useSolverState } from '../../hooks/useSolverState';
 import {
   EngineMessage,
   IntegerField,
@@ -35,22 +35,23 @@ export default function DiophantineSolver() {
 
   const result = useMemo(() => solveDiophantine(a, b, c), [a, b, c]);
 
-  const handleSave = () => {
+  const inputsValid = parsed.a !== null && parsed.b !== null && parsed.c !== null;
+
+  const summary = useMemo(() => {
+    if (!inputsValid) return null;
     const equation = equationLatex(parsed.a, parsed.b, parsed.c);
 
     // The degenerate case (0x + 0y = 0) reports hasSolution without producing
     // x0/y0, which used to be interpolated straight into the summary as
     // "(undefined, undefined)".
-    if (result.isDegenerate) {
-      save(`${equation} \\implies (x, y) \\in \\mathbb{Z}^2`);
-    } else if (result.hasSolution) {
-      save(`${equation} \\implies (x_0, y_0) = (${result.x0}, ${result.y0})`);
-    } else {
-      save(`${equation} \\implies \\varnothing`);
+    if (result.isDegenerate) return `${equation} \\implies (x, y) \\in \\mathbb{Z}^2`;
+    if (result.hasSolution) {
+      return `${equation} \\implies (x_0, y_0) = (${result.x0}, ${result.y0})`;
     }
-  };
+    return `${equation} \\implies \\varnothing`;
+  }, [inputsValid, parsed, result]);
 
-  const inputsValid = parsed.a !== null && parsed.b !== null && parsed.c !== null;
+  useAutoSaveHistory('diophantine', values, summary);
 
   return (
     <div className="space-y-6">
@@ -88,7 +89,7 @@ export default function DiophantineSolver() {
         )}
 
         <div className="flex justify-end">
-          <SaveToHistoryButton onSave={handleSave} justSaved={justSaved} disabled={!inputsValid} />
+          <SaveToHistoryButton onSave={() => save(summary)} justSaved={justSaved} disabled={!summary} />
         </div>
       </div>
 

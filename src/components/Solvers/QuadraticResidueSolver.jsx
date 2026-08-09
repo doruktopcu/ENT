@@ -3,7 +3,7 @@ import { CheckCircle, MinusCircle, XCircle } from 'lucide-react';
 import { jacobiSymbol, legendreSymbol, parseBigInt } from '../../utils/numberTheoryEngine';
 import MathRender from '../MathRender';
 import { useApp } from '../../context/AppContext';
-import { useSolverState } from '../../hooks/useSolverState';
+import { useAutoSaveHistory, useSolverState } from '../../hooks/useSolverState';
 import {
   EngineMessage,
   IntegerField,
@@ -29,15 +29,13 @@ export default function QuadraticResidueSolver() {
   // Shown whenever the Legendre symbol is undefined but Jacobi still applies.
   const jacobi = useMemo(() => jacobiSymbol(a, p), [a, p]);
 
-  const handleSave = () => {
-    if (legendre.ok) {
-      save(legendre.symbol);
-    } else if (jacobi.ok) {
-      save(`\\left(\\frac{${a}}{${p}}\\right)_{\\text{Jacobi}} = ${jacobi.value}`);
-    }
-  };
+  const summary = legendre.ok
+    ? legendre.symbol
+    : jacobi.ok
+      ? `\\left(\\frac{${a}}{${p}}\\right)_{\\text{Jacobi}} = ${jacobi.value}`
+      : null;
 
-  const canSave = legendre.ok || jacobi.ok;
+  useAutoSaveHistory('quadratic_residue', values, summary);
 
   const statusStyles =
     legendre.value === 1
@@ -67,7 +65,7 @@ export default function QuadraticResidueSolver() {
         </div>
 
         <div className="flex justify-end">
-          <SaveToHistoryButton onSave={handleSave} justSaved={justSaved} disabled={!canSave} />
+          <SaveToHistoryButton onSave={() => save(summary)} justSaved={justSaved} disabled={!summary} />
         </div>
       </div>
 

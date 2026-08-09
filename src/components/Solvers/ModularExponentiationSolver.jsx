@@ -3,7 +3,7 @@ import { ShieldCheck, Zap } from 'lucide-react';
 import { findOrder, modularExponentiation, parseBigInt } from '../../utils/numberTheoryEngine';
 import MathRender from '../MathRender';
 import { useApp } from '../../context/AppContext';
-import { useSolverState } from '../../hooks/useSolverState';
+import { useAutoSaveHistory, useSolverState } from '../../hooks/useSolverState';
 import {
   EngineMessage,
   IntegerField,
@@ -12,7 +12,7 @@ import {
 } from '../ui/SolverPrimitives';
 
 export default function ModularExponentiationSolver() {
-  const { t } = useApp();
+  const { engine, t } = useApp();
   const { values, setValue, save, justSaved } = useSolverState('mod_exp', {
     base: '3',
     exp: '400',
@@ -21,12 +21,13 @@ export default function ModularExponentiationSolver() {
   const { base, exp, mod } = values;
 
   const power = useMemo(() => modularExponentiation(base, exp, mod), [base, exp, mod]);
-  const order = useMemo(() => findOrder(base, mod), [base, mod]);
+  const order = useMemo(
+    () => findOrder(base, mod, engine.factorisation),
+    [base, mod, engine.factorisation]
+  );
 
-  const handleSave = () => {
-    if (!power.ok) return;
-    save(`${base}^{${exp}} \\equiv ${power.value} \\pmod{${mod}}`);
-  };
+  const summary = power.ok ? `${base}^{${exp}} \\equiv ${power.value} \\pmod{${mod}}` : null;
+  useAutoSaveHistory('mod_exp', values, summary);
 
   return (
     <div className="space-y-6">
@@ -55,7 +56,7 @@ export default function ModularExponentiationSolver() {
         </div>
 
         <div className="flex justify-end">
-          <SaveToHistoryButton onSave={handleSave} justSaved={justSaved} disabled={!power.ok} />
+          <SaveToHistoryButton onSave={() => save(summary)} justSaved={justSaved} disabled={!summary} />
         </div>
       </div>
 

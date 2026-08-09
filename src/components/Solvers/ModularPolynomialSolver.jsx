@@ -3,7 +3,7 @@ import { AlertTriangle, CheckCircle, Table } from 'lucide-react';
 import { parseBigInt, solveModularPolynomial } from '../../utils/numberTheoryEngine';
 import MathRender from '../MathRender';
 import { useApp } from '../../context/AppContext';
-import { useSolverState } from '../../hooks/useSolverState';
+import { useAutoSaveHistory, useSolverState } from '../../hooks/useSolverState';
 import {
   EngineMessage,
   IntegerField,
@@ -58,7 +58,7 @@ function polynomialLatex(coefficients) {
 }
 
 export default function ModularPolynomialSolver() {
-  const { t } = useApp();
+  const { engine, t } = useApp();
   const { values, setValue, save, justSaved } = useSolverState('modular_poly', {
     a5: '0',
     a4: '0',
@@ -78,16 +78,19 @@ export default function ModularPolynomialSolver() {
       solveModularPolynomial(
         [values.a0, values.a1, values.a2, values.a3, values.a4, values.a5],
         values.b,
-        values.mod
+        values.mod,
+        engine.polynomial
       ),
-    [values]
+    [values, engine.polynomial]
   );
 
-  const handleSave = () => {
-    if (!result.ok) return;
+  const summary = useMemo(() => {
+    if (!result.ok || !polyLatex) return null;
     const roots = result.roots.length > 0 ? result.roots.join(', ') : '\\varnothing';
-    save(`${polyLatex} \\equiv ${values.b} \\pmod{${values.mod}} \\implies x \\in \\{${roots}\\}`);
-  };
+    return `${polyLatex} \\equiv ${values.b} \\pmod{${values.mod}} \\implies x \\in \\{${roots}\\}`;
+  }, [result, polyLatex, values.b, values.mod]);
+
+  useAutoSaveHistory('modular_poly', values, summary);
 
   const visibleRows = result.ok ? result.evaluations.slice(0, TABLE_ROW_LIMIT) : [];
 
@@ -134,7 +137,7 @@ export default function ModularPolynomialSolver() {
         )}
 
         <div className="flex justify-end">
-          <SaveToHistoryButton onSave={handleSave} justSaved={justSaved} disabled={!result.ok} />
+          <SaveToHistoryButton onSave={() => save(summary)} justSaved={justSaved} disabled={!summary} />
         </div>
       </div>
 

@@ -6,7 +6,7 @@ import { DEFAULT_TOPIC_ID, TOPICS } from './config/topics';
 
 import SearchHeader from './components/SearchHeader';
 import ProfessorAssistant from './components/ProfessorAssistant';
-import SettingsModal from './components/SettingsModal';
+import SettingsPage from './components/SettingsPage';
 import HistoryTab from './components/HistoryTab';
 import CustomFormulaWorkbench from './components/CustomFormulaWorkbench';
 import TheoryWiki from './components/TheoryWiki';
@@ -40,6 +40,7 @@ const TAB_PANELS = {
   workbench: CustomFormulaWorkbench,
   history: HistoryTab,
   wiki: TheoryWiki,
+  settings: SettingsPage,
 };
 
 /** Open the full lab page, both as an extension and from a plain dev server. */
@@ -50,8 +51,7 @@ function openFullLabView() {
 }
 
 function MainAppShell() {
-  const { activeTab, setActiveTab, selectedTopicId, setSelectedTopicId, setIsSettingsOpen, language, t } =
-    useApp();
+  const { activeTab, setActiveTab, selectedTopicId, setSelectedTopicId, language, t } = useApp();
 
   const activeTopic = TOPICS.find((topic) => topic.id === selectedTopicId) ?? TOPICS[0];
   const ActiveSolver = SOLVERS[activeTopic.id] ?? SOLVERS[DEFAULT_TOPIC_ID];
@@ -80,7 +80,7 @@ function MainAppShell() {
         <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
-            onClick={() => setIsSettingsOpen(true)}
+            onClick={() => setActiveTab('settings')}
             aria-label={t('settings.language')}
             className="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-sm"
           >
@@ -147,8 +147,6 @@ function MainAppShell() {
           ActivePanel && <ActivePanel />
         )}
       </main>
-
-      <SettingsModal />
 
       <footer className="mt-12 pt-6 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col md:flex-row items-center justify-between gap-2 font-mono">
         <span>{t('footerTagline', { version: APP_VERSION })}</span>

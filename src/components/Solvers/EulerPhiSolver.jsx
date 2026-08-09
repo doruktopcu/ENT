@@ -3,7 +3,7 @@ import { Layers, Sparkles } from 'lucide-react';
 import { computeEulerPhi } from '../../utils/numberTheoryEngine';
 import MathRender from '../MathRender';
 import { useApp } from '../../context/AppContext';
-import { useSolverState } from '../../hooks/useSolverState';
+import { useAutoSaveHistory, useSolverState } from '../../hooks/useSolverState';
 import {
   EngineMessage,
   IntegerField,
@@ -12,16 +12,14 @@ import {
 } from '../ui/SolverPrimitives';
 
 export default function EulerPhiSolver() {
-  const { t } = useApp();
+  const { engine, t } = useApp();
   const { values, setValue, save, justSaved } = useSolverState('euler_phi', { n: '50' });
   const { n } = values;
 
-  const result = useMemo(() => computeEulerPhi(n), [n]);
+  const result = useMemo(() => computeEulerPhi(n, engine.residue), [n, engine.residue]);
 
-  const handleSave = () => {
-    if (!result.ok) return;
-    save(`\\varphi(${result.n}) = ${result.phi}`);
-  };
+  const summary = result.ok ? `\\varphi(${result.n}) = ${result.phi}` : null;
+  useAutoSaveHistory('euler_phi', values, summary);
 
   return (
     <div className="space-y-6">
@@ -37,7 +35,7 @@ export default function EulerPhiSolver() {
         />
 
         <div className="flex justify-end">
-          <SaveToHistoryButton onSave={handleSave} justSaved={justSaved} disabled={!result.ok} />
+          <SaveToHistoryButton onSave={() => save(summary)} justSaved={justSaved} disabled={!summary} />
         </div>
       </div>
 

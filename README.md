@@ -36,8 +36,21 @@ All arithmetic is arbitrary-precision. Each solver shows its derivation, not jus
 - **Formula workbench** — sweep a range and watch a sequence behave: perfect-square generators,
   a Fermat primality scan that explicitly flags pseudoprimes, and a modular multiplication sweep.
 - **Theory guide** — twelve localised entries with LaTeX statements and external references.
-- **History** — save a calculation explicitly, then reload its parameters back into its solver.
+- **History** — save a calculation explicitly (or automatically), then reload its parameters back
+  into its solver. Export and re-import the log as JSON.
+- **Settings page** — language, theme, computation limits, startup defaults, history behaviour and
+  stored-data management, all persisted locally.
 - **Themes** — dark, light, or follow the system (and it keeps following if you change the OS setting).
+
+### Settings
+
+| Group | What it controls |
+| --- | --- |
+| **Appearance** | Interface language (English / Türkçe) and theme (dark / light / system) |
+| **Computation limits** | Residue preview size, polynomial scan range, and the trial-division budget. The lab computes as you type, so these caps keep a large input from freezing the window |
+| **Startup** | Which tab and which solver the lab opens on |
+| **History** | How many entries to keep, and whether saving is manual or automatic (debounced, never per keystroke) |
+| **Data** | Storage used, entries saved, JSON export/import, and selective reset |
 
 ---
 
@@ -64,17 +77,21 @@ npm run dev
 | `npm run dev` | Vite dev server with hot reload |
 | `npm run build` | Production build into `dist/` |
 | `npm run preview` | Serve the built `dist/` locally |
-| `npm test` | Run the engine and i18n test suites |
+| `npm test` | Run the engine, settings and i18n test suites |
+| `npm run lint` | ESLint (React, hooks and jsx-a11y rules) |
+| `npm run lint:fix` | ESLint with autofix |
 | `npm run icons` | Regenerate `public/icons` at 16/48/128 px |
 
 ### Testing
 
-`npm test` runs Node's built-in test runner. The number-theory tests check results against
+`npm test` runs Node's built-in test runner; `npm run lint` runs ESLint with the React, hooks and
+accessibility rule sets. The number-theory tests check results against
 brute-force implementations rather than hard-coded constants — `τ`/`σ` against divisor
 enumeration, `φ` against counting coprimes, congruences against exhaustive search, the Legendre
 symbol against enumerating squares, primality against a sieve. The i18n tests assert that the
 English and Turkish trees have identical key paths and placeholders, that no string is empty,
-and that no Turkish-only term (EBOB, EKOK, TKS, İKS) appears in English-facing copy.
+and that no Turkish-only term (EBOB, EKOK, TKS, İKS) appears in English-facing copy. The settings
+tests cover clamping, enum validation and recovery from junk in storage.
 
 ### Project layout
 
@@ -83,8 +100,10 @@ src/
   utils/numberTheoryEngine.js   All mathematics. Returns error codes, never prose.
   i18n/translations.js          English + Turkish. The single source of UI text.
   config/topics.js              Topic registry and search keywords.
-  context/AppContext.jsx        Language, theme, history, translation helper.
+  config/settings.js            Preference defaults, bounds and validation.
+  context/AppContext.jsx        Language, theme, settings, history, translations.
   hooks/useSolverState.js       Shared solver input / history plumbing.
+  components/SettingsPage.jsx   The settings surface.
   components/                   UI, one component per solver.
 scripts/generate_icons.js       Renders the extension icons from code.
 ent.py                          Standalone Python engine (same algorithms).
