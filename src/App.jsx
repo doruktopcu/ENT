@@ -20,10 +20,13 @@ import PrimeFactorizationSolver from './components/Solvers/PrimeFactorizationSol
 import ChineseRemainderSolver from './components/Solvers/ChineseRemainderSolver';
 import ModularExponentiationSolver from './components/Solvers/ModularExponentiationSolver';
 import QuadraticResidueSolver from './components/Solvers/QuadraticResidueSolver';
+import PrimitiveRootSolver from './components/Solvers/PrimitiveRootSolver';
+import CryptographySolver from './components/Solvers/CryptographySolver';
+import PrimalitySolver from './components/Solvers/PrimalitySolver';
 
 const APP_VERSION = '1.0.0';
 
-/** A lookup table beats nine chained `&&` expressions in the render tree. */
+/** A lookup table beats a dozen chained `&&` expressions in the render tree. */
 const SOLVERS = {
   gcd_lcm: GcdLcmSolver,
   diophantine: DiophantineSolver,
@@ -34,6 +37,9 @@ const SOLVERS = {
   crt: ChineseRemainderSolver,
   mod_exp: ModularExponentiationSolver,
   quadratic_residue: QuadraticResidueSolver,
+  primitive_roots: PrimitiveRootSolver,
+  cryptography: CryptographySolver,
+  primality: PrimalitySolver,
 };
 
 const TAB_PANELS = {

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { CheckCircle2, ChevronRight, GraduationCap, HelpCircle, Lightbulb } from 'lucide-react';
+import { BookOpen, CheckCircle2, ChevronRight, GraduationCap, HelpCircle, Lightbulb } from 'lucide-react';
 import MathRender from './MathRender';
 import { useApp } from '../context/AppContext';
+
+/** The free online edition of the reference textbook. */
+const BOOK_URL = 'https://math.gordon.edu/ntic/ntic/ntic.html';
 
 const NOTE_TABS = [
   { id: 'pedagogy', labelKey: 'notes.intuition', Icon: Lightbulb },
@@ -94,6 +97,21 @@ export default function LectureNotes({ activeTopic }) {
               <p className="italic text-slate-300">{t(`insights.${topicId}.history`)}</p>
             )}
           </div>
+
+          {activeTopic?.book && (
+            <p className="mt-2 text-[11px] text-slate-400 flex items-center gap-1.5">
+              <BookOpen className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
+              <span>{t('notes.bookReference', { sections: activeTopic.book })}</span>
+              <a
+                href={BOOK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-400 hover:text-amber-300 underline underline-offset-2"
+              >
+                {t('notes.readOnline')}
+              </a>
+            </p>
+          )}
         </div>
       )}
     </section>

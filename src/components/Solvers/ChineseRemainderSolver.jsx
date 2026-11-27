@@ -9,6 +9,7 @@ import {
   SaveToHistoryButton,
   ScrollableTable,
   SolverHeader,
+  StepList,
 } from '../ui/SolverPrimitives';
 
 const MAX_CONGRUENCES = 10;
@@ -17,9 +18,9 @@ export default function ChineseRemainderSolver() {
   const { t } = useApp();
   const { values, setValue, save, justSaved } = useSolverState('crt', {
     congruences: [
-      { a: '2', m: '3' },
-      { a: '3', m: '5' },
-      { a: '2', m: '7' },
+      { c: '1', a: '2', m: '3' },
+      { c: '1', a: '3', m: '5' },
+      { c: '1', a: '2', m: '7' },
     ],
   });
 
@@ -27,7 +28,7 @@ export default function ChineseRemainderSolver() {
 
   const addCongruence = () => {
     if (congruences.length >= MAX_CONGRUENCES) return;
-    setValue('congruences', [...congruences, { a: '1', m: '4' }]);
+    setValue('congruences', [...congruences, { c: '1', a: '1', m: '4' }]);
   };
 
   const removeCongruence = (index) => {
@@ -58,7 +59,7 @@ export default function ChineseRemainderSolver() {
   return (
     <div className="space-y-6">
       <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
-        <SolverHeader titleKey="topics.crt.title" badge="x ≡ aᵢ (mod mᵢ)" />
+        <SolverHeader titleKey="topics.crt.title" badge="cᵢx ≡ aᵢ (mod mᵢ)" />
 
         <ul className="space-y-2 list-none">
           {congruences.map((congruence, index) => (
@@ -72,6 +73,17 @@ export default function ChineseRemainderSolver() {
                 #{index + 1}
               </span>
               <div className="flex items-center gap-2 flex-1 min-w-0">
+                {/* Rows saved before coefficients existed have no `c`. */}
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  value={congruence.c ?? '1'}
+                  aria-label={`${t('fields.coefficientC')} #${index + 1}`}
+                  aria-invalid={parseBigInt(congruence.c ?? '1') === null}
+                  onChange={(event) => updateCongruence(index, 'c', event.target.value)}
+                  className="math-input w-14 text-center"
+                />
                 <span className="text-xs text-slate-400 font-mono shrink-0">x ≡</span>
                 <input
                   type="text"
@@ -140,6 +152,34 @@ export default function ChineseRemainderSolver() {
             </div>
           </div>
 
+          {result.reductions.length > 0 && (
+            <div className="glass-panel p-5 rounded-2xl border border-slate-800">
+              <StepList
+                titleKey="solvers.crt.reductionsHeading"
+                steps={result.reductions.map((row) => ({
+                  key: 'crt.reduceRow',
+                  vars: { row: row.row },
+                  latex: row.latex,
+                }))}
+              />
+            </div>
+          )}
+
+          {result.method === 'merged' && (
+            <div className="glass-panel p-5 rounded-2xl border border-indigo-500/30 bg-indigo-500/5 space-y-3">
+              <p className="text-xs text-indigo-300 leading-relaxed">{t('solvers.crt.mergedNote')}</p>
+              <StepList
+                titleKey="solvers.crt.mergeHeading"
+                steps={result.mergeSteps.map((step) => ({
+                  key: 'crt.mergeStep',
+                  vars: { m1: step.M, m2: step.m, gcd: step.gcd },
+                  latex: step.latex,
+                }))}
+              />
+            </div>
+          )}
+
+          {result.method === 'classical' && (
           <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-3">
             <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
               {t('solvers.crtBreakdown')}
@@ -184,6 +224,7 @@ export default function ChineseRemainderSolver() {
               </tbody>
             </ScrollableTable>
           </div>
+          )}
         </div>
       ) : (
         <EngineMessage

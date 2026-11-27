@@ -1,6 +1,11 @@
 import React, { useMemo } from 'react';
-import { AlertTriangle, CheckCircle, Table } from 'lucide-react';
-import { parseBigInt, solveModularPolynomial } from '../../utils/numberTheoryEngine';
+import { AlertTriangle, CheckCircle, Layers, Table } from 'lucide-react';
+import {
+  isPrime,
+  parseBigInt,
+  solveModularPolynomial,
+  solvePolynomialByPrimePowers,
+} from '../../utils/numberTheoryEngine';
 import MathRender from '../MathRender';
 import { useApp } from '../../context/AppContext';
 import { useAutoSaveHistory, useSolverState } from '../../hooks/useSolverState';
@@ -8,9 +13,100 @@ import {
   EngineMessage,
   IntegerField,
   SaveToHistoryButton,
+  ResidueChips,
   ScrollableTable,
   SolverHeader,
 } from '../ui/SolverPrimitives';
+
+/** Lifting steps shown per prime power before the list is cut off. */
+const LIFT_STEP_LIMIT = 40;
+
+/**
+ * Hensel's lemma on each prime power of m, then the CRT (NTIC §7.2,
+ * Algorithm 16.1.5). Shown for composite moduli, where it explains *why* the
+ * scan found the roots it did — and for large prime powers, where the scan is
+ * truncated but lifting still finds every root.
+ */
+function PrimePowerMethod({ result, scanTruncated }) {
+  const { t } = useApp();
+  if (!result) return null;
+  if (!result.ok) {
+    return <EngineMessage code={result.code} vars={result.vars} tone="info" title={t('solvers.hensel.heading')} />;
+  }
+
+  return (
+    <div className="glass-panel p-5 rounded-2xl border border-indigo-500/30 bg-indigo-500/5 space-y-4">
+      <h4 className="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-2">
+        <Layers className="w-4 h-4" aria-hidden="true" />
+        {t('solvers.hensel.heading')}
+      </h4>
+      <p className="text-xs text-slate-300 leading-relaxed">
+        {t('solvers.hensel.explain', { m: result.modulus })}
+      </p>
+      <div className="text-center p-3 bg-slate-950 rounded-xl border border-slate-800 overflow-x-auto">
+        <MathRender math={`${result.modulus} = ${result.factorString}`} block />
+      </div>
+
+      <ul className="space-y-3 list-none">
+        {result.components.map((component) => (
+          <li
+            key={component.modulus.toString()}
+            className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-2"
+          >
+            <div className="text-xs font-semibold text-slate-200">
+              {t('solvers.hensel.componentRoots', {
+                count: component.roots.length,
+                m: component.modulus,
+              })}
+            </div>
+            {component.roots.length > 0 && <ResidueChips values={component.roots} tone="indigo" />}
+            {component.power > 1n && (
+              <details className="text-xs text-slate-300">
+                <summary className="cursor-pointer text-indigo-300 hover:text-indigo-200">
+                  {t('solvers.hensel.showLifting')}
+                </summary>
+                <ol className="mt-2 space-y-1.5 list-none">
+                  {component.levels.map((level) => (
+                    <li key={level.modulus.toString()} className="overflow-x-auto overflow-y-hidden py-0.5">
+                      <MathRender
+                        math={`\\pmod{${component.prime}^{${level.exponent}}}: \\; x \\in \\{${level.roots.join(', ') || '\\,'}\\}`}
+                      />
+                    </li>
+                  ))}
+                </ol>
+                <ol className="mt-2 space-y-1.5 list-none border-t border-slate-800 pt-2">
+                  {component.steps.slice(0, LIFT_STEP_LIMIT).map((step, index) => (
+                    // Steps are positional; a root can be lifted at several levels.
+                    <li key={index} className="overflow-x-auto overflow-y-hidden py-0.5">
+                      <MathRender math={step.latex} />
+                    </li>
+                  ))}
+                </ol>
+              </details>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      <div className="pt-2 border-t border-slate-800 space-y-2">
+        <p className="text-xs font-semibold text-slate-200">
+          {t('solvers.hensel.combined', {
+            product: result.components.map((c) => c.roots.length).join(' · '),
+            count: result.count,
+            m: result.modulus,
+          })}
+        </p>
+        {result.roots && result.roots.length > 0 && <ResidueChips values={result.roots} />}
+        {result.truncated && (
+          <p className="text-xs text-amber-400">{t('solvers.hensel.tooManyToCombine')}</p>
+        )}
+        {scanTruncated && result.roots && (
+          <p className="text-xs text-emerald-300">{t('solvers.hensel.beatsScan')}</p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 /** How many evaluation rows to render; the scan itself goes further. */
 const TABLE_ROW_LIMIT = 200;
@@ -83,6 +179,18 @@ export default function ModularPolynomialSolver() {
       ),
     [values, engine.polynomial]
   );
+
+  // Only worth showing when m has more structure than a single prime.
+  const primePowers = useMemo(() => {
+    const m = parseBigInt(values.mod);
+    if (m === null || m < 4n || isPrime(m)) return null;
+    return solvePolynomialByPrimePowers(
+      [values.a0, values.a1, values.a2, values.a3, values.a4, values.a5],
+      values.b,
+      m,
+      { scanLimit: engine.polynomial.scanLimit, budget: engine.factorisation.budget }
+    );
+  }, [values, engine.polynomial, engine.factorisation]);
 
   const summary = useMemo(() => {
     if (!result.ok || !polyLatex) return null;
@@ -216,6 +324,8 @@ export default function ModularPolynomialSolver() {
           </div>
         </div>
       )}
+
+      {result.ok && <PrimePowerMethod result={primePowers} scanTruncated={result.truncated} />}
     </div>
   );
 }

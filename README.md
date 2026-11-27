@@ -22,12 +22,18 @@ All arithmetic is arbitrary-precision. Each solver shows its derivation, not jus
 | **Extended GCD & LCM** | `gcd(a, b)`, the Bezout identity `au + bv = d`, `lcm(a, b)`, and the full division chain |
 | **Linear Diophantine** | `ax + by = c`: solvability test, a particular solution, and the parametric family `x(t), y(t)` |
 | **Linear congruence** | `ax ≡ b (mod m)`: every incongruent solution, the modular inverse, and the reduction steps |
-| **Modular polynomial** | Roots of degree 1–5 polynomials `f(x) ≡ b (mod m)`, with an evaluation table |
+| **Modular polynomial** | Roots of degree 1–5 polynomials `f(x) ≡ b (mod m)`, with an evaluation table, plus Hensel lifting to prime powers and CRT recombination for composite `m` |
 | **Euler totient** | `φ(n)`, the complete residue system `ℤₙ`, and the reduced residue system `(ℤ/nℤ)ˣ` |
 | **Prime factorisation** | Canonical decomposition, `τ(n)`, `σ(n)`, the Möbius function `μ(n)`, and the divisor list |
-| **Chinese Remainder** | Systems `x ≡ aᵢ (mod mᵢ)` with a coprimality check and a per-term breakdown |
+| **Chinese Remainder** | Systems `cᵢx ≡ aᵢ (mod mᵢ)`: coefficients are reduced first, coprime moduli use the classical construction, and shared factors are merged pairwise with a compatibility check |
 | **Modular exponentiation** | `aᵉ mod m` by square-and-multiply, the order `ordₘ(a)`, and a primitive-root test |
-| **Quadratic residues** | The Legendre symbol via Euler's criterion, plus the Jacobi symbol for composite moduli |
+| **Quadratic residues & congruences** | The Legendre symbol via Euler's criterion, the Jacobi symbol, the residue list mod p, every square root of `a` mod `n`, and `ax² + bx + c ≡ 0` by completing the square |
+| **Primitive roots & discrete logs** | Existence (`n = 2, 4, pᵏ, 2pᵏ`), the test lemma, every primitive root, a table of indices, and `xᵏ ≡ a` / `bˣ ≡ a` via indices |
+| **Cryptography** | Caesar and affine ciphers, the exponent cipher, Diffie–Hellman key exchange, RSA, and two-of-three CRT secret sharing, using the textbook's A = 1 … Z = 26 block encoding |
+| **Primality tests** | Wilson's theorem, the Fermat test, Miller's test step by step, strong pseudoprimes with a liar count, and Korselt's criterion for Carmichael numbers |
+
+The last three solvers, and the extensions to CRT, polynomial and quadratic congruences, follow
+Crisman's *Number Theory: In Context and Interactive*. See [Reference textbook](#reference-textbook).
 
 ### Beyond the solvers
 
@@ -88,7 +94,10 @@ npm run dev
 accessibility rule sets. The number-theory tests check results against
 brute-force implementations rather than hard-coded constants — `τ`/`σ` against divisor
 enumeration, `φ` against counting coprimes, congruences against exhaustive search, the Legendre
-symbol against enumerating squares, primality against a sieve. The i18n tests assert that the
+symbol against enumerating squares, primality against a sieve. `bookAdditions.test.js` does the
+same for the textbook-derived functions (square roots mod n for every n ≤ 250, Hensel lifting,
+primitive roots, Miller's test against the textbook strong-probable-prime definition, Korselt
+against brute force), and also pins the book's own worked examples, cited by number. The i18n tests assert that the
 English and Turkish trees have identical key paths and placeholders, that no string is empty,
 and that no Turkish-only term (EBOB, EKOK, TKS, İKS) appears in English-facing copy. The settings
 tests cover clamping, enum validation and recovery from junk in storage.
@@ -105,8 +114,9 @@ src/
   hooks/useSolverState.js       Shared solver input / history plumbing.
   components/SettingsPage.jsx   The settings surface.
   components/                   UI, one component per solver.
+docs/BOOK_SOURCES.md            What was taken from the reference textbook, and where.
 scripts/generate_icons.js       Renders the extension icons from code.
-ent.py                          Standalone Python engine (same algorithms).
+ent.py                          Standalone Python engine (the original nine solvers).
 ```
 
 ### Localisation
@@ -133,6 +143,23 @@ ent.solve_linear_congruence(140, 133, 301)
 ent.crt([(2, 3), (3, 5), (2, 7)])  # (23, 105)
 ent.is_prime(561)                  # False — Carmichael numbers do not slip through
 ```
+
+The textbook-derived additions (primitive roots, cryptography, primality tests, Hensel lifting,
+square roots mod n, general CRT) exist only in the JavaScript engine for now.
+
+---
+
+## Reference textbook
+
+The newer solvers follow Karl-Dieter Crisman, *Number Theory: In Context and Interactive*
+(2024 edition, free online at <https://math.gordon.edu/ntic/>). Each topic's lecture notes name
+the relevant sections and link to the online book.
+
+The book is licensed CC BY-ND 4.0, so the lab copies none of its text, figures or code. It
+implements the mathematics in its own words and uses the book's worked examples as test
+fixtures. [`docs/BOOK_SOURCES.md`](docs/BOOK_SOURCES.md) lists, for every function, the
+sections it draws on, the examples it is tested against, and where it departs from the book.
+It also records a small numerical inconsistency found in the book's affine-cipher example.
 
 ---
 

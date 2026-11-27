@@ -27,6 +27,8 @@ import {
   solveModularPolynomial,
 } from './numberTheoryEngine.js';
 
+// Tier 1 additions from Crisman's NTIC are tested in ./bookAdditions.test.js.
+
 const naiveGcd = (a, b) => {
   let x = a < 0n ? -a : a;
   let y = b < 0n ? -b : b;
@@ -202,7 +204,9 @@ test('solveCRT reconstructs a solution satisfying every congruence', () => {
     }
   }
 
-  assert.equal(solveCRT([{ a: 1, m: 4 }, { a: 2, m: 6 }]).code, 'moduliNotCoprime');
+  // Shared factors are no longer rejected outright: 2 = gcd(4, 6) does not
+  // divide 2 − 1, so this particular system is genuinely inconsistent.
+  assert.equal(solveCRT([{ a: 1, m: 4 }, { a: 2, m: 6 }]).code, 'crtIncompatible');
   assert.equal(solveCRT([{ a: 1, m: 0 }]).hasSolution, false, 'zero modulus must not throw');
   assert.equal(solveCRT([]).hasSolution, false);
 });

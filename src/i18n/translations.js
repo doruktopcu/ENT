@@ -46,6 +46,8 @@ export const translations = {
       intuition: 'Intuition & tips',
       theorem: 'Formal theorem',
       history: 'Historical context',
+      bookReference: 'Textbook: Crisman, Number Theory: In Context and Interactive, {sections}.',
+      readOnline: 'Read online',
     },
 
     solvers: {
@@ -122,6 +124,139 @@ export const translations = {
         'There are exactly {phi} integers in 1 … {n} that are coprime to {n}.',
       primeFactorBreakdown: 'Prime factor contributions',
       primeFactorRow: 'p = {p}, exponent {k}',
+      modeLabel: 'Mode',
+      listTruncated: 'Showing {shown} of {total}.',
+      primitive: {
+        modeRoots: 'Primitive roots',
+        modePower: 'Higher roots xᵏ ≡ a',
+        modeLog: 'Discrete log bˣ ≡ a',
+        exists: '{n} has primitive roots',
+        doesNotExist: '{n} has no primitive root',
+        form: {
+          small: 'n = 2 and n = 4 are the small cases where Uₙ is cyclic.',
+          oddPrimePower: 'n is a power of an odd prime, so Uₙ is cyclic.',
+          twiceOddPrimePower: 'n is twice a power of an odd prime, so Uₙ is cyclic.',
+          highPowerOfTwo:
+            'n = 2ᵏ with k ≥ 3: no unit has order φ(n), because the largest possible order is 2ᵏ⁻².',
+          severalOddPrimes: 'n has two different odd prime factors, so Uₙ is not cyclic.',
+          fourDividesN: '4 divides n and n has an odd prime factor, so Uₙ is not cyclic.',
+        },
+        allRoots: 'All {count} primitive roots (there are always φ(φ(n)) of them)',
+        tooManyToList:
+          'φ(n) is too large to list every primitive root; the smallest one and the count are exact.',
+        testHeading: 'Is {a} a primitive root of {n}?',
+        testExplain:
+          'A unit a is a primitive root exactly when a^(φ(n)/q) ≢ 1 for every prime q dividing φ(n) — one power per prime, not φ(n) powers.',
+        notRoot: '{a} is not a primitive root of {n}: some a^(φ(n)/q) ≡ 1.',
+        indexTable: 'Table of indices for g = {g} modulo {n}',
+        solutionCount: '{count} solution(s) modulo {m}',
+      },
+      primality: {
+        verdictPrime: '{n} is prime',
+        verdictComposite: '{n} is composite',
+        verdictNote:
+          'Verdict from the deterministic Miller–Rabin test (bases 2 … 41). The panels below show what each classical test says — and where each one can be fooled.',
+        wilsonHeading: "Wilson's theorem",
+        wilsonPrime: '(n − 1)! ≡ −1 (mod n), exactly as Wilson’s theorem predicts for a prime.',
+        wilsonComposite: '(n − 1)! ≢ −1 (mod n), so n cannot be prime.',
+        wilsonPairs: 'Every 1 < a < n − 1 pairs off with its inverse, leaving only 1 · (n − 1):',
+        fermatHeading: 'Fermat test, base {a}',
+        fermatPass: 'aⁿ⁻¹ ≡ 1 and n is prime.',
+        fermatPseudoprime: 'aⁿ⁻¹ ≡ 1 although n is composite: n is a pseudoprime to base {a}.',
+        fermatFail: 'aⁿ⁻¹ ≢ 1, so n is certainly composite.',
+        fermatNotCoprime: 'gcd({a}, {n}) = {gcd} > 1, so n is composite.',
+        millerHeading: "Miller's test, base {a}",
+        millerExplain:
+          'Start with a^((n−1)/2). −1 means pass; anything other than ±1 means fail; +1 with an even exponent means halve the exponent and look again.',
+        stepPass: 'pass',
+        stepFail: 'fail',
+        stepContinue: '+1, halve',
+        millerPass: 'n passes Miller’s test to base {a} and is prime.',
+        strongPseudoprime:
+          '{n} passes Miller’s test to base {a} but is composite: a strong pseudoprime.',
+        millerFail: '{n} fails Miller’s test to base {a}, so it is composite.',
+        liarCount:
+          '{count} of the bases 1 … {n} − 1 pass Miller’s test for this composite; the guaranteed bound is (n − 1)/4 = {bound}.',
+        korseltHeading: "Korselt's criterion (Carmichael numbers)",
+        korselt: {
+          prime: '{n} is prime, so it is not a Carmichael number.',
+          notSquarefree: '{n} is not squarefree, so it is not a Carmichael number.',
+          divisibilityFails: 'Some p − 1 does not divide n − 1, so {n} is not a Carmichael number.',
+          carmichael:
+            '{n} is a Carmichael number: aⁿ ≡ a (mod n) for every a, so the Fermat test can never expose it.',
+        },
+      },
+      crypto: {
+        modeAffine: 'Caesar / affine',
+        modeExponent: 'Exponent cipher',
+        modeDh: 'Key exchange',
+        modeRsa: 'RSA',
+        modeSharing: 'Secret sharing',
+        inputText: 'Text',
+        inputNumbers: 'Numbers',
+        inputType: 'Message type',
+        block: 'Block',
+        encrypted: 'Encrypted',
+        decrypted: 'Decrypted',
+        blocksBelow: 'Every block must be smaller than {n}.',
+        encodingNote:
+          'Letters A–Z become 1–26 (other characters are ignored). A block of k letters is read in base 26 with the first letter as the units digit; block size 0 sends the whole message as one number.',
+        explain: {
+          affine:
+            'Encrypt with m ≡ ax + b (mod n) and decrypt with x ≡ a′(m − b), which needs gcd(a, n) = 1. Caesar’s cipher is a = 1, b = 3, n = 26.',
+          exponent:
+            'Encrypt with c ≡ xᵉ (mod p) for a prime p with gcd(e, p − 1) = 1; decrypt with f ≡ e⁻¹ (mod p − 1), since x^(ef) ≡ x by Fermat’s little theorem.',
+          dh:
+            'Alice and Bob agree publicly on p and g, keep m and n secret, exchange gᵐ and gⁿ, and both arrive at g^(mn) without ever sending it.',
+          rsa:
+            'Publish n = pq and e; keep d ≡ e⁻¹ (mod φ(n)) private. Anyone can compute xᵉ, but undoing it needs φ(n) — and so, as far as anyone knows, the factors of n.',
+          sharing:
+            'Split a secret K among three people so that any two of them — but no single one — can rebuild it with the Chinese Remainder Theorem.',
+        },
+        keys: 'Keys',
+        inverseNote: '{a}⁻¹ ≡ {inverse} (mod {n}) undoes the multiplication.',
+        lossyWarning:
+          'Block {block} is larger than n = {n}, so it cannot be recovered uniquely. Use a larger modulus or smaller blocks.',
+        dhHeading: 'Diffie–Hellman key exchange',
+        dhNotGenerator:
+          '{g} is not a primitive root of {p}, so the shared keys come from a smaller subgroup — easier for an eavesdropper.',
+        rsaHeading: 'RSA key generation',
+        sharingHeading: 'Keys and reconstruction',
+        person: 'Person',
+        reconstruct: 'Any two keys rebuild K₀ by the CRT, and K = K₀ mod p:',
+      },
+      crt: {
+        reductionsHeading: 'Rows with coefficients, solved first',
+        mergedNote:
+          'Some moduli share a factor, so the classical CRT formula does not apply. The congruences are merged two at a time instead: a pair is compatible exactly when gcd(mᵢ, mⱼ) divides aⱼ − aᵢ, and the answer is unique modulo the lcm.',
+        mergeHeading: 'Merging the congruences',
+      },
+      hensel: {
+        heading: 'Prime powers + CRT (Hensel lifting)',
+        explain:
+          'Solve modulo each prime power of {m}, lifting every root from p to p², p³, … with Hensel’s lemma, then combine the pieces with the Chinese Remainder Theorem.',
+        componentRoots: '{count} root(s) modulo {m}',
+        showLifting: 'Show the lifting steps',
+        combined: 'Number of roots: {product} = {count} modulo {m}',
+        tooManyToCombine: 'Too many combinations to list; the count is exact.',
+        beatsScan: 'The direct scan stopped early, but this method found every root.',
+      },
+      quadratic: {
+        modeLegendre: 'Legendre symbol',
+        modeSqrt: 'Square roots mod n',
+        modeQuadratic: 'Quadratic ax² + bx + c',
+        sqrtCount: '{count} square root(s) of {a} modulo {n}',
+        sqrtNone: '{a} has no square root modulo {n}',
+        tooManyRoots: 'Too many roots to list; the count is exact.',
+        sqrtExplain:
+          'Solved modulo each prime power separately, then combined with the CRT. A single prime power without a root rules out every solution.',
+        bothRoots: 'Square roots: x ≡ {roots} give x² ≡ {a} (mod {p})',
+        residueListHeading: 'Quadratic residues modulo {p}',
+        residuesLabel: 'Residues ({count})',
+        nonResiduesLabel: 'Non-residues ({count})',
+        scanFallback:
+          'gcd(2a, {n}) ≠ 1, so completing the square would mean dividing by a non-unit. Every x was checked directly instead.',
+      },
     },
 
     fields: {
@@ -143,6 +278,28 @@ export const translations = {
       constantTerm: 'Constant term',
       multiplierA: 'Multiplier a',
       rangeLimit: 'Upper bound N',
+      modulusN: 'Modulus n',
+      candidateA: 'Candidate a',
+      exponentK: 'Exponent k',
+      targetValueA: 'Target a',
+      baseB: 'Base b',
+      message: 'Message',
+      numberList: 'Numbers (comma separated)',
+      blockSize: 'Letters per block',
+      blockSizeWhole: 'Letters per block (0 = all)',
+      shiftB: 'Shift b',
+      primeP: 'Prime p',
+      primeQ: 'Prime q',
+      baseG: 'Base g',
+      aliceSecret: "Alice's secret m",
+      bobSecret: "Bob's secret n",
+      publicExponent: 'Public exponent e',
+      secretK: 'Secret K',
+      randomT: 'Random t',
+      shareModulus1: 'Modulus m₁',
+      shareModulus2: 'Modulus m₂',
+      shareModulus3: 'Modulus m₃',
+      coefficientC: 'Coefficient c',
     },
 
     workbench: {
@@ -263,7 +420,7 @@ export const translations = {
       },
       modular_poly: {
         title: 'Modular polynomial roots',
-        description: 'Roots of degree 1–5 polynomials f(x) ≡ b (mod m)',
+        description: 'Roots of degree 1–5 polynomials f(x) ≡ b (mod m), with Hensel lifting to prime powers',
       },
       euler_phi: {
         title: 'Euler totient φ(n) & residue systems',
@@ -275,15 +432,29 @@ export const translations = {
       },
       crt: {
         title: 'Chinese Remainder Theorem',
-        description: 'Simultaneous congruences x ≡ aᵢ (mod mᵢ) with coprime moduli',
+        description: 'Simultaneous congruences cᵢx ≡ aᵢ (mod mᵢ), including moduli that share factors',
       },
       mod_exp: {
         title: 'Modular exponentiation & order',
         description: 'Fast modular power aᵉ mod m, order ordₘ(a) and primitive root test',
       },
       quadratic_residue: {
-        title: 'Quadratic residues & Legendre symbol',
-        description: "Legendre symbol (a/p), Euler's criterion, Jacobi symbol",
+        title: 'Quadratic residues & congruences',
+        description: "Legendre and Jacobi symbols, Euler's criterion, square roots mod n and ax² + bx + c ≡ 0",
+      },
+      primitive_roots: {
+        title: 'Primitive roots & discrete logarithms',
+        description: 'Existence, every primitive root, index tables, xᵏ ≡ a and bˣ ≡ a (mod n)',
+      },
+      cryptography: {
+        title: 'Cryptography',
+        description:
+          'Caesar and affine ciphers, the exponent cipher, Diffie–Hellman, RSA and CRT secret sharing',
+      },
+      primality: {
+        title: 'Primality tests & pseudoprimes',
+        description:
+          "Wilson's theorem, the Fermat and Miller tests, strong pseudoprimes and Carmichael numbers",
       },
     },
 
@@ -311,7 +482,7 @@ export const translations = {
       },
       modular_poly: {
         pedagogy:
-          'Over a prime modulus p, Lagrange’s theorem bounds a degree-n polynomial by n roots. Over a composite modulus that bound fails — x² ≡ 1 (mod 8) already has four solutions.',
+          'Over a prime modulus p, Lagrange’s theorem bounds a degree-n polynomial by n roots. Over a composite modulus that bound fails — x² ≡ 1 (mod 8) already has four solutions. Modulo a prime power pᵉ, Hensel’s lemma lifts each root mod p one power at a time, and the CRT then glues the prime powers together.',
         theorem:
           'f \\not\\equiv 0, \\deg f = n, p \\text{ prime} \\implies f \\text{ has at most } n \\text{ roots mod } p',
         history: 'Proved by Joseph-Louis Lagrange in 1768.',
@@ -333,7 +504,7 @@ export const translations = {
       },
       crt: {
         pedagogy:
-          'With pairwise coprime moduli the system x ≡ aᵢ (mod mᵢ) has exactly one solution modulo M = ∏mᵢ. Build it term by term: each Mᵢ = M/mᵢ is invertible mod mᵢ, so aᵢMᵢyᵢ hits aᵢ in slot i and vanishes everywhere else.',
+          'With pairwise coprime moduli the system x ≡ aᵢ (mod mᵢ) has exactly one solution modulo M = ∏mᵢ. Build it term by term: each Mᵢ = M/mᵢ is invertible mod mᵢ, so aᵢMᵢyᵢ hits aᵢ in slot i and vanishes everywhere else. If moduli share a factor, merge two congruences at a time: a solution exists exactly when gcd(mᵢ, mⱼ) divides aⱼ − aᵢ, and it is unique modulo the lcm.',
         theorem:
           'x \\equiv \\sum_{i=1}^{r} a_i M_i y_i \\pmod{M}, \\quad M_i = \\frac{M}{m_i}, \\quad M_i y_i \\equiv 1 \\pmod{m_i}',
         history:
@@ -353,6 +524,30 @@ export const translations = {
           '\\left(\\frac{a}{p}\\right) \\equiv a^{\\frac{p-1}{2}} \\pmod{p}, \\quad \\left(\\frac{p}{q}\\right)\\left(\\frac{q}{p}\\right) = (-1)^{\\frac{p-1}{2}\\frac{q-1}{2}}',
         history:
           'Gauss called quadratic reciprocity the “golden theorem” and published six different proofs of it.',
+      },
+      primitive_roots: {
+        pedagogy:
+          'A primitive root g of n generates every unit: g, g², …, g^φ(n) run through all of Uₙ. Every unit is then a power gⁱ, and i = ind_g(a) behaves like a logarithm — xᵏ ≡ a and bˣ ≡ a become linear congruences modulo φ(n).',
+        theorem:
+          'U_n \\text{ cyclic} \\iff n \\in \\{2, 4, p^k, 2p^k\\}, \\quad g \\text{ primitive} \\iff g^{\\varphi(n)/q} \\not\\equiv 1 \\;\\; \\forall\\, q \\mid \\varphi(n)',
+        history:
+          'Euler named primitive roots in 1773; Gauss gave the first complete proof that every prime has one in the Disquisitiones Arithmeticae (1801).',
+      },
+      cryptography: {
+        pedagogy:
+          'Modern ciphers are public about their method and secret only about their keys. Each rests on an operation that is easy to perform and, without the key, hard to undo: multiplying primes, or raising to a power modulo n.',
+        theorem:
+          'ed \\equiv 1 \\pmod{\\varphi(n)} \\implies (x^e)^d \\equiv x \\pmod{n}, \\quad n = pq',
+        history:
+          'Diffie and Hellman published public key exchange in 1976, and Rivest, Shamir and Adleman published RSA in 1977. Clifford Cocks at GCHQ had found an equivalent scheme in 1973; it stayed classified until 1997.',
+      },
+      primality: {
+        pedagogy:
+          'Fermat’s little theorem gives a fast test — but composites can pass it, and Carmichael numbers pass it for every base. Miller’s test also watches the square roots of 1 along the way, and no composite fools it for more than a quarter of the bases.',
+        theorem:
+          'n \\text{ prime} \\iff (n-1)! \\equiv -1 \\pmod{n}, \\qquad p \\text{ prime} \\implies a^{p-1} \\equiv 1 \\pmod{p}',
+        history:
+          'Ibn al-Haytham stated Wilson’s theorem around 1000 and Lagrange proved it in 1771. Korselt gave his criterion in 1899 and Robert Carmichael produced the first examples in 1910–12; Miller (1976) and Rabin (1980) made Miller’s test the standard probabilistic primality test.',
       },
     },
 
@@ -374,6 +569,36 @@ export const translations = {
         step6: 'Lift to all {count} incongruent solutions modulo {m}.',
         trivialModulus: 'Every integer is congruent modulo 1, so x ≡ 0 is the only class.',
       },
+      index: {
+        primitiveRoot: 'Take the primitive root g = {g} of {n}.',
+        writeTarget: 'Write the right-hand side as a power of g (its index).',
+        substitutePower: 'Put x = gⁱ and compare exponents modulo φ(n).',
+        backSubstitute: 'Solve for i and turn each of the {count} exponents back into x = gⁱ.',
+        writeBoth: 'Write both b and a as powers of g.',
+        substituteExponent: 'Compare exponents modulo φ(n) — a linear congruence in x.',
+      },
+      quadratic: {
+        multiply: 'Multiply through by 4a = {factor}.',
+        isolate: 'Complete the square and isolate it.',
+        squareRoots: 'Find all {count} square root(s) s of {d} modulo {n}.',
+        solveLinear: 'Undo 2ax + b = s with the inverse of 2a.',
+      },
+      dh: {
+        alicePublic: 'Alice publishes A = gᵐ.',
+        bobPublic: 'Bob publishes B = gⁿ.',
+        aliceKey: 'Alice raises B to the secret m.',
+        bobKey: 'Bob raises A to the secret n — and gets the same number.',
+      },
+      rsa: {
+        modulus: 'Multiply the primes to get the public modulus.',
+        totient: 'Compute φ(n) — easy only for someone who knows p and q.',
+        coprime: 'Check that e is coprime to φ(n).',
+        private: 'Invert e modulo φ(n) to get the private key d.',
+      },
+      crt: {
+        reduceRow: 'Row {row}: solve this linear congruence on its own.',
+        mergeStep: 'Merge moduli {m1} and {m2} (gcd = {gcd}).',
+      },
     },
 
     engine: {
@@ -391,8 +616,6 @@ export const translations = {
       zeroCoefficientsNoSolution: '0x + 0y can never equal a non-zero constant.',
       everyPairIsASolution: '0x + 0y = 0 holds for every pair of integers.',
       noCongruences: 'Add at least one congruence.',
-      moduliNotCoprime:
-        'Moduli {m1} and {m2} share the factor {gcd}. The classical CRT needs pairwise coprime moduli.',
       notCoprime: 'The values are not coprime (gcd = {gcd}), so no inverse exists.',
       noInverseForNegativeExponent:
         'A negative exponent needs a modular inverse, but {a} is not invertible modulo {m}.',
@@ -403,6 +626,50 @@ export const translations = {
       legendreModulusNotPrime:
         '{p} is not prime, so the Legendre symbol is undefined. Use the Jacobi symbol below instead.',
       jacobiRequiresOddPositive: 'The Jacobi symbol needs a positive odd modulus.',
+      crtRowUnsolvable:
+        'Row {row}: gcd({c}, {m}) = {d} does not divide {a}, so {c}x ≡ {a} (mod {m}) has no solution — and neither does the system.',
+      crtIncompatible:
+        'x ≡ {a1} (mod {m1}) and x ≡ {a2} (mod {m2}) contradict each other: gcd({m1}, {m2}) = {gcd} does not divide {a2} − {a1}.',
+      henselRequiresPrime: '{p} is not prime, so Hensel lifting does not apply.',
+      henselRequiresPositiveExponent: 'The exponent must be at least 1.',
+      henselPrimeTooLarge:
+        'The prime factor {p} is above the scan limit {limit}, so its roots could not be found by search.',
+      tooManyRoots: 'More than {limit} roots modulo {m} — too many to list.',
+      wilsonTooLarge: '(n − 1)! is only computed for n ≤ {limit}.',
+      millerRequiresOdd: "Miller's test needs an odd n ≥ 3.",
+      millerTrivialBase: 'Base {a} is ≡ 0 or ±1 (mod {n}), which says nothing. Pick 1 < a < n − 1.',
+      liarCountTooLarge: 'Counting every base is limited to n ≤ {limit}.',
+      primitiveRootSearchExhausted: 'No primitive root was found within the search limit.',
+      indexModulusTooSmall: 'Use a modulus n ≥ 3.',
+      indexNeedsPrimitiveRoot:
+        '{n} has no primitive root, so the index method does not apply. Split n with the CRT and solve each part instead.',
+      indexTooLarge: 'φ(n) exceeds {limit}; computing an index would take too long here.',
+      indexRequiresUnits: 'Indices exist only for numbers coprime to {n}.',
+      indexNoSolution:
+        'The linear congruence in the exponents has no solution, so neither does the original congruence.',
+      exponentMustBePositive: 'The exponent must be a positive integer.',
+      quadraticLeadingZero:
+        'a ≡ 0 (mod {n}), so this is not a quadratic. Use the linear congruence solver.',
+      quadraticNeedsUnitLeading:
+        'gcd(2·{a}, {n}) ≠ 1, so the square cannot be completed, and n is above the scan limit {limit}.',
+      residueListTooLarge: 'Residues are listed only for primes up to {limit}.',
+      messageHasNoLetters: 'The message needs at least one letter A–Z.',
+      invalidBlockSize: 'The block size must be 0 or a positive integer.',
+      invalidNumberList: 'Enter non-negative integers separated by commas or spaces.',
+      affineNeedsUnit: 'gcd({a}, {n}) = {gcd} ≠ 1, so multiplying by {a} cannot be undone.',
+      requiresPrimeModulus: '{p} is not prime.',
+      exponentNotCoprime:
+        'gcd({e}, {m}) = {gcd} ≠ 1, so the exponent {e} cannot be inverted modulo {m}.',
+      blockExceedsModulus:
+        'Block {block} is not smaller than {n}, so it would not survive encryption. Use smaller blocks or a larger modulus.',
+      dhBaseOutOfRange: 'Choose a base g with 1 < g < {p}.',
+      rsaRequiresPrimes: 'RSA needs p and q to be prime.',
+      rsaPrimesMustDiffer: 'p and q must be different primes.',
+      secretMustBeBelowP: 'The secret K must satisfy 0 ≤ K < p = {p}.',
+      sharingModuliNotCoprime:
+        '{x} and {y} share the factor {gcd}; the moduli and p must be pairwise coprime.',
+      sharingThresholdFails: 'Need m₁m₂ > p·m₃ (with m₁ < m₂ < m₃), but {M} ≤ {pm}.',
+      sharingTTooLarge: 't is too large: K + tp must stay below m₁m₂, so t ≤ {max}.',
     },
 
     wiki: {
@@ -538,6 +805,8 @@ export const translations = {
       intuition: 'Sezgi ve ipuçları',
       theorem: 'Formal teorem',
       history: 'Tarihsel arka plan',
+      bookReference: 'Ders kitabı: Crisman, Number Theory: In Context and Interactive, {sections}.',
+      readOnline: 'Çevrimiçi oku',
     },
 
     solvers: {
@@ -613,6 +882,143 @@ export const translations = {
       totientMeaning: '1 … {n} aralığında {n} ile aralarında asal olan tam {phi} sayı vardır.',
       primeFactorBreakdown: 'Asal çarpan katkıları',
       primeFactorRow: 'p = {p}, kuvvet {k}',
+      modeLabel: 'Mod',
+      listTruncated: '{total} öğeden {shown} tanesi gösteriliyor.',
+      primitive: {
+        modeRoots: 'İlkel kökler',
+        modePower: 'Yüksek kökler xᵏ ≡ a',
+        modeLog: 'Ayrık logaritma bˣ ≡ a',
+        exists: '{n} sayısının ilkel kökleri vardır',
+        doesNotExist: '{n} sayısının ilkel kökü yoktur',
+        form: {
+          small: 'n = 2 ve n = 4, Uₙ grubunun devirli olduğu küçük durumlardır.',
+          oddPrimePower: 'n tek bir asalın kuvvetidir, dolayısıyla Uₙ devirlidir.',
+          twiceOddPrimePower: 'n, tek bir asal kuvvetinin iki katıdır, dolayısıyla Uₙ devirlidir.',
+          highPowerOfTwo:
+            'k ≥ 3 için n = 2ᵏ: hiçbir birimin mertebesi φ(n) olamaz, çünkü mümkün en büyük mertebe 2ᵏ⁻²’dir.',
+          severalOddPrimes:
+            'n’nin iki farklı tek asal çarpanı vardır, dolayısıyla Uₙ devirli değildir.',
+          fourDividesN:
+            '4 sayısı n’yi böler ve n’nin tek bir asal çarpanı vardır, dolayısıyla Uₙ devirli değildir.',
+        },
+        allRoots: '{count} ilkel kökün tamamı (sayıları her zaman φ(φ(n))’dir)',
+        tooManyToList:
+          'φ(n) tüm ilkel kökleri listelemek için çok büyük; en küçük kök ve kök sayısı kesindir.',
+        testHeading: '{a}, {n} modülüne göre ilkel kök mü?',
+        testExplain:
+          'Bir a birimi, φ(n)’yi bölen her q asalı için a^(φ(n)/q) ≢ 1 ise ve ancak o zaman ilkel köktür — φ(n) tane değil, her asal için tek bir kuvvet yeterlidir.',
+        notRoot: '{a}, {n} modülüne göre ilkel kök değildir: bazı a^(φ(n)/q) ≡ 1.',
+        indexTable: '{n} modülüne göre g = {g} için indeks tablosu',
+        solutionCount: '{m} modülüne göre {count} çözüm',
+      },
+      primality: {
+        verdictPrime: '{n} asaldır',
+        verdictComposite: '{n} bileşiktir',
+        verdictNote:
+          'Karar, deterministik Miller–Rabin testinden (2 … 41 tabanları) gelir. Aşağıdaki paneller her klasik testin ne söylediğini ve nerede yanılabileceğini gösterir.',
+        wilsonHeading: 'Wilson teoremi',
+        wilsonPrime: '(n − 1)! ≡ −1 (mod n); Wilson teoreminin bir asal için öngördüğü gibi.',
+        wilsonComposite: '(n − 1)! ≢ −1 (mod n), dolayısıyla n asal olamaz.',
+        wilsonPairs:
+          '1 < a < n − 1 aralığındaki her sayı tersiyle eşleşir; geriye yalnızca 1 · (n − 1) kalır:',
+        fermatHeading: 'Fermat testi, taban {a}',
+        fermatPass: 'aⁿ⁻¹ ≡ 1 ve n asaldır.',
+        fermatPseudoprime: 'n bileşik olduğu hâlde aⁿ⁻¹ ≡ 1: n, {a} tabanına göre sahte asaldır.',
+        fermatFail: 'aⁿ⁻¹ ≢ 1, dolayısıyla n kesinlikle bileşiktir.',
+        fermatNotCoprime: 'EBOB({a}, {n}) = {gcd} > 1, dolayısıyla n bileşiktir.',
+        millerHeading: 'Miller testi, taban {a}',
+        millerExplain:
+          'a^((n−1)/2) ile başla. −1 “geçer” demektir; ±1 dışındaki her değer “kalır” demektir; üs çiftken +1 çıkarsa üssü yarıya indirip yeniden bak.',
+        stepPass: 'geçer',
+        stepFail: 'kalır',
+        stepContinue: '+1, yarıya indir',
+        millerPass: 'n, {a} tabanında Miller testini geçer ve asaldır.',
+        strongPseudoprime:
+          '{n}, {a} tabanında Miller testini geçer ama bileşiktir: güçlü sahte asal.',
+        millerFail: '{n}, {a} tabanında Miller testinden kalır, dolayısıyla bileşiktir.',
+        liarCount:
+          'Bu bileşik sayı için 1 … {n} − 1 tabanlarından {count} tanesi Miller testini geçer; garanti edilen üst sınır (n − 1)/4 = {bound}.',
+        korseltHeading: 'Korselt kriteri (Carmichael sayıları)',
+        korselt: {
+          prime: '{n} asaldır, dolayısıyla Carmichael sayısı değildir.',
+          notSquarefree: '{n} karesiz değildir, dolayısıyla Carmichael sayısı değildir.',
+          divisibilityFails:
+            'Bazı p − 1 değerleri n − 1’i bölmez, dolayısıyla {n} Carmichael sayısı değildir.',
+          carmichael:
+            '{n} bir Carmichael sayısıdır: her a için aⁿ ≡ a (mod n), bu yüzden Fermat testi onu asla yakalayamaz.',
+        },
+      },
+      crypto: {
+        modeAffine: 'Sezar / afin',
+        modeExponent: 'Üs şifresi',
+        modeDh: 'Anahtar değişimi',
+        modeRsa: 'RSA',
+        modeSharing: 'Gizli paylaşım',
+        inputText: 'Metin',
+        inputNumbers: 'Sayılar',
+        inputType: 'Mesaj türü',
+        block: 'Blok',
+        encrypted: 'Şifreli',
+        decrypted: 'Çözülmüş',
+        blocksBelow: 'Her blok {n} sayısından küçük olmalıdır.',
+        encodingNote:
+          'A–Z harfleri 1–26 olur (diğer karakterler yok sayılır). k harflik bir blok, ilk harf birler basamağı olacak şekilde 26 tabanında okunur; blok boyutu 0 tüm mesajı tek bir sayı olarak gönderir.',
+        explain: {
+          affine:
+            'm ≡ ax + b (mod n) ile şifrele, x ≡ a′(m − b) ile çöz; bunun için EBOB(a, n) = 1 gerekir. Sezar şifresi a = 1, b = 3, n = 26 durumudur.',
+          exponent:
+            'p asal ve EBOB(e, p − 1) = 1 iken c ≡ xᵉ (mod p) ile şifrele; f ≡ e⁻¹ (mod p − 1) ile çöz, çünkü Fermat’nın küçük teoremine göre x^(ef) ≡ x.',
+          dh:
+            'Alice ve Bob p ile g üzerinde açıkça anlaşır, m ve n’yi gizli tutar, gᵐ ve gⁿ değerlerini paylaşır; g^(mn) sayısını hiç göndermeden ikisi de ona ulaşır.',
+          rsa:
+            'n = pq ve e açıklanır; d ≡ e⁻¹ (mod φ(n)) gizli tutulur. Herkes xᵉ hesaplayabilir, ama işlemi geri almak için φ(n) — bilindiği kadarıyla da n’nin çarpanları — gerekir.',
+          sharing:
+            'Bir K sırrını üç kişi arasında öyle paylaştır ki herhangi ikisi Çin Kalan Teoremi ile onu yeniden kurabilsin, ama hiçbiri tek başına kuramasın.',
+        },
+        keys: 'Anahtarlar',
+        inverseNote: '{a}⁻¹ ≡ {inverse} (mod {n}) çarpmayı geri alır.',
+        lossyWarning:
+          '{block} bloğu n = {n} değerinden büyük, bu yüzden tek türlü geri elde edilemez. Daha büyük bir modül ya da daha küçük bloklar kullanın.',
+        dhHeading: 'Diffie–Hellman anahtar değişimi',
+        dhNotGenerator:
+          '{g}, {p} modülüne göre ilkel kök değil; ortak anahtarlar daha küçük bir alt gruptan gelir — bu da dinleyen biri için işi kolaylaştırır.',
+        rsaHeading: 'RSA anahtar üretimi',
+        sharingHeading: 'Anahtarlar ve yeniden kurma',
+        person: 'Kişi',
+        reconstruct: 'Herhangi iki anahtar ÇKT ile K₀’ı yeniden kurar ve K = K₀ mod p:',
+      },
+      crt: {
+        reductionsHeading: 'Katsayılı satırlar önce çözülür',
+        mergedNote:
+          'Bazı modüller ortak çarpan paylaşıyor, bu yüzden klasik ÇKT formülü uygulanamaz. Kongrüanslar bunun yerine ikişer ikişer birleştirilir: bir çift ancak ve ancak EBOB(mᵢ, mⱼ) sayısı aⱼ − aᵢ farkını bölüyorsa uyumludur ve çözüm EKOK’a göre tektir.',
+        mergeHeading: 'Kongrüansları birleştirme',
+      },
+      hensel: {
+        heading: 'Asal kuvvetler + ÇKT (Hensel yükseltmesi)',
+        explain:
+          '{m} sayısının her asal kuvvetine göre ayrı ayrı çöz, her kökü Hensel lemması ile p’den p², p³, … modüllerine yükselt, sonra parçaları Çin Kalan Teoremi ile birleştir.',
+        componentRoots: '{m} modülüne göre {count} kök',
+        showLifting: 'Yükseltme adımlarını göster',
+        combined: 'Kök sayısı: {product} = {count} ({m} modülüne göre)',
+        tooManyToCombine: 'Listelemek için çok fazla birleşim var; sayı kesindir.',
+        beatsScan: 'Doğrudan tarama erken durdu, ama bu yöntem tüm kökleri buldu.',
+      },
+      quadratic: {
+        modeLegendre: 'Legendre sembolü',
+        modeSqrt: 'Mod n karekökler',
+        modeQuadratic: 'İkinci derece ax² + bx + c',
+        sqrtCount: '{n} modülüne göre {a} sayısının {count} karekökü',
+        sqrtNone: '{a} sayısının {n} modülüne göre karekökü yoktur',
+        tooManyRoots: 'Listelemek için çok fazla kök var; sayı kesindir.',
+        sqrtExplain:
+          'Her asal kuvvet modülüne göre ayrı ayrı çözülür, sonra ÇKT ile birleştirilir. Kökü olmayan tek bir asal kuvvet bile tüm çözümleri ortadan kaldırır.',
+        bothRoots: 'Karekökler: x ≡ {roots} için x² ≡ {a} (mod {p})',
+        residueListHeading: '{p} modülüne göre karesel kalanlar',
+        residuesLabel: 'Kalanlar ({count})',
+        nonResiduesLabel: 'Kalan olmayanlar ({count})',
+        scanFallback:
+          'EBOB(2a, {n}) ≠ 1, bu yüzden kareye tamamlamak birim olmayan bir sayıya bölmeyi gerektirirdi. Bunun yerine her x doğrudan denendi.',
+      },
     },
 
     fields: {
@@ -634,6 +1040,28 @@ export const translations = {
       constantTerm: 'Sabit terim',
       multiplierA: 'Çarpan a',
       rangeLimit: 'Üst sınır N',
+      modulusN: 'Modül n',
+      candidateA: 'Aday a',
+      exponentK: 'Üs k',
+      targetValueA: 'Hedef a',
+      baseB: 'Taban b',
+      message: 'Mesaj',
+      numberList: 'Sayılar (virgülle ayrılmış)',
+      blockSize: 'Blok başına harf',
+      blockSizeWhole: 'Blok başına harf (0 = tümü)',
+      shiftB: 'Kaydırma b',
+      primeP: 'Asal p',
+      primeQ: 'Asal q',
+      baseG: 'Taban g',
+      aliceSecret: 'Alice’in sırrı m',
+      bobSecret: 'Bob’un sırrı n',
+      publicExponent: 'Açık üs e',
+      secretK: 'Sır K',
+      randomT: 'Rastgele t',
+      shareModulus1: 'Modül m₁',
+      shareModulus2: 'Modül m₂',
+      shareModulus3: 'Modül m₃',
+      coefficientC: 'Katsayı c',
     },
 
     workbench: {
@@ -755,7 +1183,7 @@ export const translations = {
       },
       modular_poly: {
         title: 'Modüler polinom kökleri',
-        description: '1–5. derece f(x) ≡ b (mod m) polinomlarının kökleri',
+        description: '1–5. derece f(x) ≡ b (mod m) polinomlarının kökleri; asal kuvvetlere Hensel yükseltmesi',
       },
       euler_phi: {
         title: 'Euler fonksiyonu φ(n) ve kalan sistemleri',
@@ -770,7 +1198,7 @@ export const translations = {
       crt: {
         title: 'Çin Kalan Teoremi',
         description:
-          'Aralarında asal modüllerle eşzamanlı kongrüanslar x ≡ aᵢ (mod mᵢ)',
+          'Ortak çarpanlı modüller dahil, eşzamanlı kongrüanslar cᵢx ≡ aᵢ (mod mᵢ)',
       },
       mod_exp: {
         title: 'Modüler üs alma ve mertebe',
@@ -778,8 +1206,22 @@ export const translations = {
           'Hızlı modüler kuvvet aᵉ mod m, mertebe ordₘ(a) ve ilkel kök testi',
       },
       quadratic_residue: {
-        title: 'Karesel kalanlar ve Legendre sembolü',
-        description: 'Legendre sembolü (a/p), Euler kriteri, Jacobi sembolü',
+        title: 'Karesel kalanlar ve kongrüanslar',
+        description: 'Legendre ve Jacobi sembolleri, Euler kriteri, mod n karekökler ve ax² + bx + c ≡ 0',
+      },
+      primitive_roots: {
+        title: 'İlkel kökler ve ayrık logaritmalar',
+        description: 'Varlık, tüm ilkel kökler, indeks tabloları, xᵏ ≡ a ve bˣ ≡ a (mod n)',
+      },
+      cryptography: {
+        title: 'Kriptografi',
+        description:
+          'Sezar ve afin şifreler, üs şifresi, Diffie–Hellman, RSA ve ÇKT ile gizli paylaşım',
+      },
+      primality: {
+        title: 'Asallık testleri ve sahte asallar',
+        description:
+          'Wilson teoremi, Fermat ve Miller testleri, güçlü sahte asallar ve Carmichael sayıları',
       },
     },
 
@@ -808,7 +1250,7 @@ export const translations = {
       },
       modular_poly: {
         pedagogy:
-          'Asal bir p modülünde Lagrange teoremi n dereceli bir polinomu en çok n kökle sınırlar. Bileşik modüllerde bu sınır geçersizdir: x² ≡ 1 (mod 8) denkliğinin dört çözümü vardır.',
+          'Asal bir p modülünde Lagrange teoremi n dereceli bir polinomu en çok n kökle sınırlar. Bileşik modüllerde bu sınır geçersizdir: x² ≡ 1 (mod 8) denkliğinin dört çözümü vardır. Bir pᵉ asal kuvveti modülünde Hensel lemması mod p kökleri birer kuvvet yükseltir; ÇKT ise asal kuvvetleri birbirine yapıştırır.',
         theorem:
           'f \\not\\equiv 0, \\deg f = n, p \\text{ asal} \\implies f \\text{ mod } p \\text{ en çok } n \\text{ köke sahiptir}',
         history: 'Joseph-Louis Lagrange tarafından 1768’de kanıtlandı.',
@@ -830,7 +1272,7 @@ export const translations = {
       },
       crt: {
         pedagogy:
-          'Modüller ikişer ikişer aralarında asalsa x ≡ aᵢ (mod mᵢ) sisteminin M = ∏mᵢ modülüne göre tek çözümü vardır. Terim terim kurulur: her Mᵢ = M/mᵢ, mᵢ modülünde tersinirdir; böylece aᵢMᵢyᵢ yalnız i. konumda aᵢ verir, diğerlerinde sıfırlanır.',
+          'Modüller ikişer ikişer aralarında asalsa x ≡ aᵢ (mod mᵢ) sisteminin M = ∏mᵢ modülüne göre tek çözümü vardır. Terim terim kurulur: her Mᵢ = M/mᵢ, mᵢ modülünde tersinirdir; böylece aᵢMᵢyᵢ yalnız i. konumda aᵢ verir, diğerlerinde sıfırlanır. Modüller ortak çarpan paylaşıyorsa kongrüanslar ikişer ikişer birleştirilir: çözüm ancak ve ancak EBOB(mᵢ, mⱼ) sayısı aⱼ − aᵢ farkını bölüyorsa vardır ve EKOK’a göre tektir.',
         theorem:
           'x \\equiv \\sum_{i=1}^{r} a_i M_i y_i \\pmod{M}, \\quad M_i = \\frac{M}{m_i}, \\quad M_i y_i \\equiv 1 \\pmod{m_i}',
         history:
@@ -851,6 +1293,30 @@ export const translations = {
           '\\left(\\frac{a}{p}\\right) \\equiv a^{\\frac{p-1}{2}} \\pmod{p}, \\quad \\left(\\frac{p}{q}\\right)\\left(\\frac{q}{p}\\right) = (-1)^{\\frac{p-1}{2}\\frac{q-1}{2}}',
         history:
           'Gauss, karesel karşılıklılığı “altın teorem” diye andı ve altı ayrı ispatını yayımladı.',
+      },
+      primitive_roots: {
+        pedagogy:
+          'n’nin bir g ilkel kökü tüm birimleri üretir: g, g², …, g^φ(n) değerleri Uₙ’nin tamamını dolaşır. Böylece her birim bir gⁱ kuvvetidir ve i = ind_g(a) bir logaritma gibi davranır — xᵏ ≡ a ve bˣ ≡ a, φ(n) modülüne göre lineer kongrüanslara dönüşür.',
+        theorem:
+          'U_n \\text{ devirli} \\iff n \\in \\{2, 4, p^k, 2p^k\\}, \\quad g \\text{ ilkel} \\iff g^{\\varphi(n)/q} \\not\\equiv 1 \\;\\; \\forall\\, q \\mid \\varphi(n)',
+        history:
+          'İlkel kökleri 1773’te Euler adlandırdı; her asalın bir ilkel kökü olduğunun ilk tam kanıtını Gauss, Disquisitiones Arithmeticae’de (1801) verdi.',
+      },
+      cryptography: {
+        pedagogy:
+          'Modern şifreler yöntemleri konusunda açık, yalnızca anahtarları konusunda gizlidir. Her biri yapması kolay ama anahtar olmadan geri alması zor bir işleme dayanır: asalları çarpmak ya da n modülüne göre kuvvet almak.',
+        theorem:
+          'ed \\equiv 1 \\pmod{\\varphi(n)} \\implies (x^e)^d \\equiv x \\pmod{n}, \\quad n = pq',
+        history:
+          'Diffie ve Hellman açık anahtar değişimini 1976’da, Rivest, Shamir ve Adleman da RSA’yı 1977’de yayımladı. GCHQ’dan Clifford Cocks eşdeğer bir yöntemi 1973’te bulmuştu; bu çalışma 1997’ye kadar gizli kaldı.',
+      },
+      primality: {
+        pedagogy:
+          'Fermat’nın küçük teoremi hızlı bir test verir — ama bileşik sayılar da onu geçebilir, Carmichael sayıları ise her tabanda geçer. Miller testi yol boyunca 1’in kareköklerini de izler ve hiçbir bileşik sayı onu tabanların dörtte birinden fazlasında yanıltamaz.',
+        theorem:
+          'n \\text{ asal} \\iff (n-1)! \\equiv -1 \\pmod{n}, \\qquad p \\text{ asal} \\implies a^{p-1} \\equiv 1 \\pmod{p}',
+        history:
+          'Wilson teoremini 1000 yılları civarında İbn el-Heysem ifade etti, 1771’de Lagrange kanıtladı. Korselt kriterini 1899’da verdi, ilk örnekleri 1910–12’de Robert Carmichael buldu; Miller (1976) ve Rabin (1980) Miller testini standart olasılıksal asallık testine dönüştürdü.',
       },
     },
 
@@ -873,6 +1339,36 @@ export const translations = {
         trivialModulus:
           'Her tam sayı 1 modülüne göre denktir, dolayısıyla tek sınıf x ≡ 0’dır.',
       },
+      index: {
+        primitiveRoot: '{n} modülünün g = {g} ilkel kökünü al.',
+        writeTarget: 'Sağ tarafı g’nin bir kuvveti (indeksi) olarak yaz.',
+        substitutePower: 'x = gⁱ koy ve üsleri φ(n) modülüne göre karşılaştır.',
+        backSubstitute: 'i için çöz ve {count} üssün her birini x = gⁱ olarak geri çevir.',
+        writeBoth: 'Hem b’yi hem a’yı g’nin kuvvetleri olarak yaz.',
+        substituteExponent: 'Üsleri φ(n) modülüne göre karşılaştır — x için lineer bir kongrüans.',
+      },
+      quadratic: {
+        multiply: 'Her şeyi 4a = {factor} ile çarp.',
+        isolate: 'Kareye tamamla ve kareyi yalnız bırak.',
+        squareRoots: '{d} sayısının {n} modülüne göre {count} karekökünü (s) bul.',
+        solveLinear: '2a’nın tersiyle 2ax + b = s eşitliğini çöz.',
+      },
+      dh: {
+        alicePublic: 'Alice A = gᵐ değerini açıklar.',
+        bobPublic: 'Bob B = gⁿ değerini açıklar.',
+        aliceKey: 'Alice, B’yi gizli m üssüne yükseltir.',
+        bobKey: 'Bob, A’yı gizli n üssüne yükseltir — ve aynı sayıyı bulur.',
+      },
+      rsa: {
+        modulus: 'Açık modülü elde etmek için asalları çarp.',
+        totient: 'φ(n)’yi hesapla — bu yalnızca p ile q’yu bilen biri için kolaydır.',
+        coprime: 'e’nin φ(n) ile aralarında asal olduğunu kontrol et.',
+        private: 'Gizli anahtar d’yi bulmak için e’nin φ(n) modülüne göre tersini al.',
+      },
+      crt: {
+        reduceRow: '{row}. satır: bu lineer kongrüansı tek başına çöz.',
+        mergeStep: '{m1} ve {m2} modüllerini birleştir (EBOB = {gcd}).',
+      },
     },
 
     engine: {
@@ -890,8 +1386,6 @@ export const translations = {
       zeroCoefficientsNoSolution: '0x + 0y ifadesi sıfırdan farklı bir sabite eşit olamaz.',
       everyPairIsASolution: '0x + 0y = 0 her tam sayı çifti için sağlanır.',
       noCongruences: 'En az bir kongrüans ekleyin.',
-      moduliNotCoprime:
-        '{m1} ve {m2} modülleri {gcd} çarpanını paylaşıyor. Klasik ÇKT, ikişer ikişer aralarında asal modüller gerektirir.',
       notCoprime: 'Sayılar aralarında asal değil (EBOB = {gcd}), bu yüzden ters yoktur.',
       noInverseForNegativeExponent:
         'Negatif üs modüler ters gerektirir, ancak {a} sayısının {m} modülüne göre tersi yoktur.',
@@ -903,6 +1397,51 @@ export const translations = {
       legendreModulusNotPrime:
         '{p} asal olmadığından Legendre sembolü tanımsızdır. Bunun yerine aşağıdaki Jacobi sembolünü kullanın.',
       jacobiRequiresOddPositive: 'Jacobi sembolü pozitif ve tek bir modül gerektirir.',
+      crtRowUnsolvable:
+        '{row}. satır: EBOB({c}, {m}) = {d} sayısı {a} sayısını bölmez, dolayısıyla {c}x ≡ {a} (mod {m}) kongrüansının — ve sistemin — çözümü yoktur.',
+      crtIncompatible:
+        'x ≡ {a1} (mod {m1}) ve x ≡ {a2} (mod {m2}) çelişir: EBOB({m1}, {m2}) = {gcd} sayısı {a2} − {a1} farkını bölmez.',
+      henselRequiresPrime: '{p} asal değil, bu yüzden Hensel yükseltmesi uygulanamaz.',
+      henselRequiresPositiveExponent: 'Üs en az 1 olmalıdır.',
+      henselPrimeTooLarge:
+        '{p} asal çarpanı {limit} tarama sınırının üzerinde, bu yüzden kökleri aranarak bulunamadı.',
+      tooManyRoots: '{m} modülüne göre {limit} taneden fazla kök var — listelemek için çok fazla.',
+      wilsonTooLarge: '(n − 1)! yalnızca n ≤ {limit} için hesaplanır.',
+      millerRequiresOdd: 'Miller testi 3 veya daha büyük tek bir n gerektirir.',
+      millerTrivialBase:
+        '{a} tabanı {n} modülüne göre 0 veya ±1’e denktir ve hiçbir şey söylemez. 1 < a < n − 1 seçin.',
+      liarCountTooLarge: 'Tüm tabanları saymak n ≤ {limit} ile sınırlıdır.',
+      primitiveRootSearchExhausted: 'Arama sınırı içinde ilkel kök bulunamadı.',
+      indexModulusTooSmall: 'n ≥ 3 olan bir modül kullanın.',
+      indexNeedsPrimitiveRoot:
+        '{n} sayısının ilkel kökü yok, bu yüzden indeks yöntemi uygulanamaz. Bunun yerine n’yi ÇKT ile parçalara ayırıp her parçayı ayrı çözün.',
+      indexTooLarge: 'φ(n) değeri {limit} sınırını aşıyor; indeks hesabı burada çok uzun sürer.',
+      indexRequiresUnits: 'İndeksler yalnızca {n} ile aralarında asal sayılar için vardır.',
+      indexNoSolution:
+        'Üsler için elde edilen lineer kongrüansın çözümü yok, dolayısıyla asıl kongrüansın da yok.',
+      exponentMustBePositive: 'Üs pozitif bir tam sayı olmalıdır.',
+      quadraticLeadingZero:
+        'a ≡ 0 (mod {n}), dolayısıyla bu ikinci dereceden değil. Lineer kongrüans çözücüsünü kullanın.',
+      quadraticNeedsUnitLeading:
+        'EBOB(2·{a}, {n}) ≠ 1 olduğundan kareye tamamlanamaz ve n, {limit} tarama sınırının üzerinde.',
+      residueListTooLarge: 'Kalanlar yalnızca {limit} sayısına kadar olan asallar için listelenir.',
+      messageHasNoLetters: 'Mesajda en az bir A–Z harfi olmalıdır.',
+      invalidBlockSize: 'Blok boyutu 0 ya da pozitif bir tam sayı olmalıdır.',
+      invalidNumberList: 'Virgül veya boşlukla ayrılmış negatif olmayan tam sayılar girin.',
+      affineNeedsUnit: 'EBOB({a}, {n}) = {gcd} ≠ 1, bu yüzden {a} ile çarpma geri alınamaz.',
+      requiresPrimeModulus: '{p} asal değil.',
+      exponentNotCoprime:
+        'EBOB({e}, {m}) = {gcd} ≠ 1, bu yüzden {e} üssünün {m} modülüne göre tersi alınamaz.',
+      blockExceedsModulus:
+        '{block} bloğu {n} sayısından küçük değil, bu yüzden şifrelemeden bozulmadan çıkamaz. Daha küçük bloklar veya daha büyük bir modül kullanın.',
+      dhBaseOutOfRange: '1 < g < {p} olacak şekilde bir g tabanı seçin.',
+      rsaRequiresPrimes: 'RSA için p ve q asal olmalıdır.',
+      rsaPrimesMustDiffer: 'p ve q farklı asallar olmalıdır.',
+      secretMustBeBelowP: 'K sırrı 0 ≤ K < p = {p} koşulunu sağlamalıdır.',
+      sharingModuliNotCoprime:
+        '{x} ve {y} sayıları {gcd} çarpanını paylaşıyor; modüller ve p ikişer ikişer aralarında asal olmalıdır.',
+      sharingThresholdFails: 'm₁m₂ > p·m₃ (m₁ < m₂ < m₃ iken) gerekir, ama {M} ≤ {pm}.',
+      sharingTTooLarge: 't çok büyük: K + tp, m₁m₂’den küçük kalmalıdır, dolayısıyla t ≤ {max}.',
     },
 
     wiki: {
