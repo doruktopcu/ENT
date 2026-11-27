@@ -160,8 +160,11 @@ the book's presentation.
 | `averageOrders` | §20.1 (lattice points in a circle → π), §20.2–20.3 (average of τ ≈ ln x + 2γ − 1), §20.4 (σ ≈ π²x/12), §24.6.4 (φ ≈ 3x/π²) | The four averages and their predictions | Divisor-sum sieve is ours |
 | `zetaApproximations` | §24.2 (ζ), §24.3.2 (Euler product) | Partial sum vs Euler product vs π²/6, π⁴/90, … | Tail bound N^(1−s)/(s − 1) is the standard integral test |
 
-Chapter 25 (the Riemann explicit formula) is not implemented: it needs complex zeros of ζ,
-which is beyond an exact, offline arithmetic engine.
+### Chapter 25 — definition only
+
+| Item | Book source | What was taken | Notes |
+| --- | --- | --- | --- |
+| Theory guide entry `riemann` | §24.2, §25.3, Theorem 25.2.4, Fact 25.7.1 | ζ(s) as a series and Euler product; the Riemann hypothesis (non-trivial zeros on Re s = 1/2); its equivalence with the bound on π(x) − Li(x); the role of zeros in the explicit formula | Statement only, in our words. Nothing about ζ's zeros is computed: that needs complex analysis beyond an exact, offline arithmetic engine. The constant 1/8π and the range x ≥ 2657 are Schoenfeld's (1976) form of the bound |
 
 ## Not taken
 

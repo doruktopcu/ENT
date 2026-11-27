@@ -82,6 +82,15 @@ const WIKI_ENTRIES = [
     latex: '\\left(\\frac{a}{n}\\right) = \\prod_{i} \\left(\\frac{a}{p_i}\\right)^{k_i}, \\quad n = \\prod_i p_i^{k_i}',
     sourceUrl: 'https://en.wikipedia.org/wiki/Jacobi_symbol',
   },
+  {
+    // Definition only (NTIC §24.2, §25.3, Theorem 25.2.4): the lab does not
+    // compute non-trivial zeros, which needs complex analysis beyond the engine.
+    id: 'riemann',
+    category: 'functions',
+    latex:
+      '\\begin{gathered} \\zeta(s) = \\sum_{n=1}^{\\infty} \\frac{1}{n^{s}} = \\prod_{p} \\frac{1}{1 - p^{-s}} \\quad (\\operatorname{Re} s > 1) \\\\ \\zeta(\\rho) = 0,\\; 0 < \\operatorname{Re}\\rho < 1 \\implies \\operatorname{Re}\\rho = \\tfrac{1}{2} \\end{gathered}',
+    sourceUrl: 'https://math.gordon.edu/ntic/ntic/ntic.html',
+  },
 ];
 
 const CATEGORIES = ['all', 'divisibility', 'modular', 'equations', 'functions', 'theorems', 'residues'];

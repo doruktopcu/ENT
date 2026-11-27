@@ -1018,6 +1018,13 @@ export const translations = {
           details:
             'Euler’s criterion evaluates it as a^((p−1)/2) mod p. Quadratic reciprocity relates (p/q) and (q/p) for distinct odd primes, with supplements for −1 and 2.',
         },
+        riemann: {
+          title: 'Riemann zeta function & Riemann hypothesis',
+          summary:
+            'For s > 1, ζ(s) is the sum of 1/nˢ and equals a product over all primes. Riemann extended it to every complex s ≠ 1; the Riemann hypothesis says its non-trivial zeros all lie on the line Re s = 1/2.',
+          details:
+            'The Euler product is the bridge between ζ and the primes. The hypothesis is equivalent to the error bound |π(x) − Li(x)| ≤ (1/8π)·√x·ln x for x ≥ 2657, and through Riemann’s explicit formula each zero contributes an oscillating term to the prime count. It is still unproved (definition only — see Crisman §24.2, §25.3, Theorem 25.2.4).',
+        },
         jacobi: {
           title: 'Jacobi symbol',
           summary:
@@ -2048,6 +2055,13 @@ export const translations = {
             'x² ≡ a (mod p) çözülebiliyorsa a, p modülüne göre karesel kalandır. Legendre sembolü kalanlar için +1, kalan olmayanlar için −1, p | a iken 0 değerini alır.',
           details:
             'Euler kriteri sembolü a^((p−1)/2) mod p olarak hesaplar. Karesel karşılıklılık, farklı tek asallar için (p/q) ile (q/p) arasında bağ kurar; −1 ve 2 için ek kuralları vardır.',
+        },
+        riemann: {
+          title: 'Riemann zeta fonksiyonu ve Riemann hipotezi',
+          summary:
+            's > 1 için ζ(s), 1/nˢ terimlerinin toplamıdır ve tüm asallar üzerinde bir çarpıma eşittir. Riemann onu s ≠ 1 olan her karmaşık sayıya genişletti; Riemann hipotezi aşikâr olmayan tüm sıfırlarının Re s = 1/2 doğrusu üzerinde olduğunu söyler.',
+          details:
+            'Euler çarpımı ζ ile asallar arasındaki köprüdür. Hipotez, x ≥ 2657 için |π(x) − Li(x)| ≤ (1/8π)·√x·ln x hata sınırına denktir ve Riemann’ın açık formülünde her sıfır asal sayımına salınan bir terim ekler. Henüz kanıtlanmamıştır (yalnızca tanım — bkz. Crisman §24.2, §25.3, Teorem 25.2.4).',
         },
         jacobi: {
           title: 'Jacobi sembolü',

@@ -46,7 +46,7 @@ Crisman's *Number Theory: In Context and Interactive*. See [Reference textbook](
   every topic, in both languages.
 - **Formula workbench** — sweep a range and watch a sequence behave: perfect-square generators,
   a Fermat primality scan that explicitly flags pseudoprimes, and a modular multiplication sweep.
-- **Theory guide** — twelve localised entries with LaTeX statements and external references.
+- **Theory guide** — thirteen localised entries with LaTeX statements and external references, including the definition of the Riemann zeta function and the Riemann hypothesis.
 - **History** — save a calculation explicitly (or automatically), then reload its parameters back
   into its solver. Export and re-import the log as JSON.
 - **Settings page** — language, theme, computation limits, startup defaults, history behaviour and
