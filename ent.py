@@ -1,477 +1,472 @@
-# En büyük ortak bolen hesaplama.
+"""
+Elementary Number Theory engine (Python edition).
+
+A dependency-free companion to the browser extension: the same algorithms,
+same guarantees, usable from a REPL, a script or the accompanying Colab
+notebook.
+
+Design notes
+------------
+* Functions *return* their results. Printing is the caller's business, so these
+  can be composed and unit-tested; `demo()` shows the previous console output.
+* The original Turkish function names are kept as the public API so existing
+  notebooks keep working.
+* Everything is exact integer arithmetic — Python ints are arbitrary precision,
+  so no overflow handling is needed.
+"""
+
+from __future__ import annotations
+
+__all__ = [
+    "ebob", "gcd",
+    "ekok", "lcm",
+    "ext_ebob", "ext_gcd",
+    "mod_inverse",
+    "diophantus_solver",
+    "lineer_kongruens_cozumu", "solve_linear_congruence",
+    "lineer_fonksiyon_cozumleri", "solve_modular_polynomial",
+    "asal_carpanlar", "asal_bolenler", "prime_factorization",
+    "bolenler", "divisors",
+    "tau", "sigma", "mobius",
+    "euler_phi",
+    "is_prime",
+    "multiplicative_order",
+    "legendre_symbol", "jacobi_symbol",
+    "crt",
+    "tam_kalan_sistemi",
+    "demo",
+]
 
 
-def ebob(x, y):
+# ---------------------------------------------------------------------------
+# Greatest common divisor
+# ---------------------------------------------------------------------------
+
+def ebob(x: int, y: int) -> int:
+    """Greatest common divisor (En Buyuk Ortak Bolen). Always non-negative."""
+    x, y = abs(x), abs(y)
+    while y:
+        x, y = y, x % y
+    return x
+
+
+def ekok(x: int, y: int) -> int:
+    """Least common multiple (En Kucuk Ortak Kat)."""
     if x == 0 or y == 0:
         return 0
-
-    if x < 0:
-        x = -x
-    if y < 0:
-        y = -y
-
-    list1 = []
-    list2 = []
-    for i in range(2, x + 1):
-        if x % i == 0:
-            list1.append(i)
-
-    for i in range(2, y + 1):
-        if y % i == 0:
-            list2.append(i)
-
-    ebob_listesi = []
-    for i in list1:
-        if i in list2:
-            ebob_listesi.append(i)
-
-    if not ebob_listesi:
-        t = 1
-
-    else:
-        t = ebob_listesi[-1]
-
-    return t
+    return abs(x // ebob(x, y) * y)
 
 
-# En kucuk ortak kat hesaplama EKOk
+def ext_ebob(a: int, b: int) -> tuple[int, int, int]:
+    """
+    Extended Euclidean algorithm.
+
+    Returns (d, u, v) with ``a*u + b*v == d == ebob(a, b)`` and ``d >= 0``.
+
+    The previous implementation returned the raw final remainder, which is
+    negative for inputs such as (-4, -6) or (21, -35). That made it report
+    ``d = -7`` as a "greatest common divisor", and callers doing ``range(d)``
+    silently produced no solutions at all.
+    """
+    old_r, r = a, b
+    old_s, s = 1, 0
+    old_t, t = 0, 1
+
+    while r:
+        q = old_r // r
+        old_r, r = r, old_r - q * r
+        old_s, s = s, old_s - q * s
+        old_t, t = t, old_t - q * t
+
+    if old_r < 0:
+        old_r, old_s, old_t = -old_r, -old_s, -old_t
+
+    return old_r, old_s, old_t
 
 
-def ekok(x, y):
-    n = x * y
-    ortak_katlar = []
+def mod_inverse(a: int, m: int) -> int | None:
+    """Inverse of a modulo m, or None when gcd(a, m) != 1."""
+    if m <= 0:
+        raise ValueError("modulus must be positive")
+    if m == 1:
+        return 0
 
-    for i in range(1, n + 1):
-        if i % x == 0 and i % y == 0:
-            ortak_katlar.append(i)
-
-    print("Ortak katlar:", ortak_katlar)
-    ekok_x_y = ortak_katlar[0]
-    print("Ekok(", x, ",", y, ") =", ekok_x_y, "\n")
+    d, u, _ = ext_ebob(a % m, m)
+    return u % m if d == 1 else None
 
 
-# to solve an equation formed like ax + by = n
+# ---------------------------------------------------------------------------
+# Equations and congruences
+# ---------------------------------------------------------------------------
 
+def diophantus_solver(a: int, b: int, n: int) -> dict | None:
+    """
+    Solve the linear Diophantine equation ``a*x + b*y = n``.
 
-def diophantus_solver(a, b, n):
-    d = ebob(a, b)
-    cozum_ikilileri = []
-    u_v_ikilisi = []
-    u_v_ye_denk_gelen_cozumler = []
+    Returns a dict with the particular solution and the parametric steps, or
+    None when gcd(a, b) does not divide n.
+    """
+    if a == 0 and b == 0:
+        return {"x0": 0, "y0": 0, "step_x": 0, "step_y": 0, "d": 0} if n == 0 else None
 
+    d, u, v = ext_ebob(a, b)
     if n % d != 0:
-        print(n, "sayisi ", d, " ile bolunmediginden cozum yoktur.\n")
+        return None
+
+    k = n // d
+    return {
+        "d": d,
+        "x0": u * k,
+        "y0": v * k,
+        "step_x": b // d,
+        "step_y": -a // d,
+    }
+
+
+def solve_linear_congruence(a: int, b: int, m: int) -> list[int]:
+    """
+    All incongruent solutions of ``a*x = b (mod m)``, ascending.
+
+    Returns [] when gcd(a, m) does not divide b.
+    """
+    if m <= 0:
+        raise ValueError("modulus must be positive")
+    if m == 1:
+        return [0]
+
+    a %= m
+    b %= m
+    d = ebob(a, m)
+    if b % d != 0:
+        return []
+
+    a1, b1, m1 = a // d, b // d, m // d
+    inv = mod_inverse(a1, m1)
+    if inv is None:
+        return []
+
+    x0 = (inv * b1) % m1
+    return sorted((x0 + i * m1) % m for i in range(d))
+
+
+def lineer_kongruens_cozumu(a: int, mod: int, b: int) -> list[int]:
+    """Turkish-named alias kept for the notebook: ``a*x = b (mod mod)``."""
+    return solve_linear_congruence(a, b, mod)
+
+
+def solve_modular_polynomial(coeffs: list[int], b: int, mod: int) -> list[int]:
+    """
+    Roots of ``f(x) = b (mod mod)`` where ``coeffs[i]`` multiplies ``x**i``.
+
+    Uses Horner's rule, reducing at every step.
+    """
+    if mod <= 0:
+        raise ValueError("modulus must be positive")
+
+    target = b % mod
+    roots = []
+    for x in range(mod):
+        value = 0
+        for c in reversed(coeffs):
+            value = (value * x + c) % mod
+        if value == target:
+            roots.append(x)
+    return roots
+
+
+def lineer_fonksiyon_cozumleri(a_5, a_4, a_3, a_2, a_1, a_0, b, mod) -> list[int]:
+    """Turkish-named alias: roots of a5*x^5 + ... + a0 = b (mod mod)."""
+    return solve_modular_polynomial([a_0, a_1, a_2, a_3, a_4, a_5], b, mod)
+
+
+def crt(congruences: list[tuple[int, int]]) -> tuple[int, int] | None:
+    """
+    Chinese Remainder Theorem for pairwise coprime moduli.
+
+    Takes [(a1, m1), (a2, m2), ...] and returns (x, M) with x = ai (mod mi),
+    or None when the moduli are not pairwise coprime.
+    """
+    if not congruences:
+        return None
+
+    for _, m in congruences:
+        if m <= 0:
+            raise ValueError("moduli must be positive")
+
+    for i in range(len(congruences)):
+        for j in range(i + 1, len(congruences)):
+            if ebob(congruences[i][1], congruences[j][1]) != 1:
+                return None
+
+    total = 1
+    for _, m in congruences:
+        total *= m
+
+    x = 0
+    for a, m in congruences:
+        partial = total // m
+        inv = mod_inverse(partial, m)
+        if inv is None:
+            return None
+        x = (x + a * partial * inv) % total
+
+    return x % total, total
+
+
+# ---------------------------------------------------------------------------
+# Factorisation and arithmetic functions
+# ---------------------------------------------------------------------------
+
+def prime_factorization(n: int) -> dict[int, int]:
+    """Canonical factorisation of |n| as {prime: exponent}. 0 and 1 map to {}."""
+    n = abs(n)
+    if n <= 1:
+        return {}
+
+    factors: dict[int, int] = {}
+
+    while n % 2 == 0:
+        factors[2] = factors.get(2, 0) + 1
+        n //= 2
+
+    d = 3
+    while d * d <= n:
+        while n % d == 0:
+            factors[d] = factors.get(d, 0) + 1
+            n //= d
+        d += 2
+
+    if n > 1:
+        factors[n] = factors.get(n, 0) + 1
+
+    return factors
+
+
+def asal_carpanlar(n: int) -> dict[int, int]:
+    """Turkish-named alias for :func:`prime_factorization`."""
+    return prime_factorization(n)
+
+
+def asal_bolenler(integer: int) -> list[int]:
+    """Distinct prime divisors of ``integer``, ascending."""
+    return sorted(prime_factorization(integer))
+
+
+def divisors(n: int) -> list[int]:
+    """All positive divisors of |n|, ascending."""
+    n = abs(n)
+    if n == 0:
+        return []
+    if n == 1:
+        return [1]
+
+    result = [1]
+    for prime, power in prime_factorization(n).items():
+        result = [d * prime ** e for e in range(power + 1) for d in result]
+    return sorted(result)
+
+
+def bolenler(n: int) -> list[int]:
+    """Turkish-named alias for :func:`divisors`."""
+    return divisors(n)
+
+
+def tau(n: int) -> int:
+    """Number of positive divisors, tau(n)."""
+    if abs(n) == 1:
+        return 1
+    result = 1
+    for power in prime_factorization(n).values():
+        result *= power + 1
+    return result
+
+
+def sigma(n: int) -> int:
+    """Sum of positive divisors, sigma(n)."""
+    if abs(n) == 1:
+        return 1
+    result = 1
+    for prime, power in prime_factorization(n).items():
+        result *= (prime ** (power + 1) - 1) // (prime - 1)
+    return result
+
+
+def mobius(n: int) -> int:
+    """Mobius function mu(n): 0 if not squarefree, else (-1)**omega(n)."""
+    if abs(n) == 1:
+        return 1
+
+    factors = prime_factorization(n)
+    if any(power > 1 for power in factors.values()):
         return 0
-
-    if n % d == 0:
-        print(d, " sayisi", n, " sayisini boler\n", d, " adet cozum vardir.\n")
-
-        for i in range(-200, 200):
-            for k in range(-200, 200):
-                if a * i + b * k == d:
-                    x_0 = (n / d) * i
-                    y_0 = (n / d) * k
-
-                    t1 = b / d
-                    t2 = -a / d
-
-                    u_v_ikilisi.append((i, k))
-
-                    cozum_ikilileri.append((x_0, t1, y_0, t2))
-
-                    u_v_ye_denk_gelen_cozumler.append((i, k, x_0, t1, y_0, t2))
-    #
-    # print("(u,v) ax + by = d denkleminin bir cozumudur.\n ikililer:\n", "u_v_ikilileri,\n n/d = ", n / d, "\n",
-    #       u_v_ikilisi, "\n")
-
-    # print("(x_0, (b/d)*1 , y_0, -(a/d)*1) ikilileri:\n", cozum_ikilileri, "\n")
-
-    print("(u,v,x_0,b/d,y_0,-a/d)\n", "\n ", "n/d = ", n / d, "\n", u_v_ye_denk_gelen_cozumler)
-
-    return u_v_ye_denk_gelen_cozumler
+    return -1 if len(factors) % 2 else 1
 
 
-# Tam kalan sistemi hesaplama.
+def euler_phi(n: int) -> int:
+    """Euler's totient function phi(n)."""
+    if n <= 0:
+        return 0
+    result = n
+    for prime in prime_factorization(n):
+        result = result // prime * (prime - 1)
+    return result
 
-def tam_kalan_sistemi(liste1):
-    liste2 = []
-    liste3 = []
-    iks_elemanlari = []
 
-    n = len(liste1)
+# ---------------------------------------------------------------------------
+# Primality, orders and quadratic residues
+# ---------------------------------------------------------------------------
 
-    for i in range(n):
-        for k in range(n):
-            if i != k:
-                if liste1[i] % n == liste1[k] % n:
-                    liste2.append(liste1[i])
-                    liste3.append((i + 1, k + 1))
+_MILLER_RABIN_WITNESSES = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37)
 
-    if not liste2:
-        print("Liste bir tam kalan sistemidir.")
-        print(liste1)
-        for x in liste1:
-            if ebob(n, x) == 1:
-                iks_elemanlari.append(x)
-        print("Indirgenmis kalan sistemi = ", iks_elemanlari)
-        print("IKS eleman sayisi / EulerPhi(n)= ", len(iks_elemanlari), "\n")
-        return iks_elemanlari
-    else:
-        print("Tam kalan sistemi degildir.")
-        print("hangi iki element m modülüne göre denktir. listedeki sıraları : (i,k) = ", liste3)
-        print(liste2)
+
+def is_prime(n: int) -> bool:
+    """
+    Deterministic Miller-Rabin for n < 3.3e24, a strong test beyond that.
+
+    Correctly rejects Carmichael numbers such as 561, which a naive Fermat
+    test reports as prime.
+    """
+    if n < 2:
         return False
 
+    for p in _MILLER_RABIN_WITNESSES:
+        if n == p:
+            return True
+        if n % p == 0:
+            return False
 
-# Bir bilinmeyenli Lineer kongrüens cozumu ax = b (mod m)
+    d, r = n - 1, 0
+    while d % 2 == 0:
+        d //= 2
+        r += 1
 
-def lineer_kongruens_cozumu(a, mod, b):
-    d = ebob(a, mod)
-    cozumler = []
+    for a in _MILLER_RABIN_WITNESSES:
+        x = pow(a, d, n)
+        if x in (1, n - 1):
+            continue
+        for _ in range(r - 1):
+            x = x * x % n
+            if x == n - 1:
+                break
+        else:
+            return False
 
-    if b % d == 0:
-        print(a, "x = ", b, "(mod ", mod, ") lineer denkleminin cozumu vardir.")
-        print(d, " cozum vardir.")
-        a_1, m_1 = a / d, mod / d
-        for i in range(1, int(m_1)):
-            if (a_1 * i) % m_1 == 1:
-                for j in range(d):
-                    x_t = i * b / d + mod / d * j
-                    cozumler.append(int(x_t))
-        cozumler_modlanmis = [x % mod for x in cozumler]
-        print(cozumler, " modlanmamis cozumler listesi.")
-        print(cozumler_modlanmis, " ", mod, "modulune gore cozumdur.\n")
-        return cozumler_modlanmis
-    else:
-        print(a, "x = ", b, "(mod ", mod, ") lineer denkleminin cozumu yoktur.\n")
+    return True
+
+
+def multiplicative_order(a: int, m: int) -> int | None:
+    """
+    Least k > 0 with ``a**k = 1 (mod m)``, or None when gcd(a, m) != 1.
+
+    Walks the divisors of phi(m) instead of incrementing one power at a time.
+    """
+    if m <= 0:
+        raise ValueError("modulus must be positive")
+    if m == 1:
+        return 1
+    if ebob(a, m) != 1:
+        return None
+
+    a %= m
+    for candidate in divisors(euler_phi(m)):
+        if pow(a, candidate, m) == 1:
+            return candidate
+    return None
+
+
+def legendre_symbol(a: int, p: int) -> int:
+    """
+    Legendre symbol (a/p) via Euler's criterion. ``p`` must be an odd prime.
+
+    Raises ValueError otherwise — a composite modulus has no Legendre symbol,
+    and returning a plausible-looking +-1 for one is worse than failing.
+    """
+    if p < 3 or p % 2 == 0 or not is_prime(p):
+        raise ValueError(f"{p} is not an odd prime")
+
+    a %= p
+    if a == 0:
         return 0
+    return 1 if pow(a, (p - 1) // 2, p) == 1 else -1
 
 
-# 5. dereceye kadar lineer bir bilinmeyenli fonksiyon cozumleri
+def jacobi_symbol(a: int, n: int) -> int:
+    """Jacobi symbol (a/n) for odd n > 0; equals the Legendre symbol when n is prime."""
+    if n <= 0 or n % 2 == 0:
+        raise ValueError("the Jacobi symbol needs a positive odd modulus")
 
-def lineer_fonksiyon_cozumleri(a_5, a_4, a_3, a_2, a_1, a_0, b, mod):
-    saglayan_cozumler = []
-    for i in range(mod):
-        t = a_5 * pow(i, 5) + a_4 * pow(i, 4) + a_3 * pow(i, 3) + a_2 * pow(i, 2) + a_1 * pow(i, 1) + a_0
-        if t % mod == b:
-            saglayan_cozumler.append(i)
-    if not saglayan_cozumler:
-        print("Cozum yok.\n")
-        return 0
+    a %= n
+    result = 1
+
+    while a:
+        while a % 2 == 0:
+            a //= 2
+            if n % 8 in (3, 5):
+                result = -result
+        a, n = n, a
+        if a % 4 == 3 and n % 4 == 3:
+            result = -result
+        a %= n
+
+    return result if n == 1 else 0
+
+
+def tam_kalan_sistemi(liste: list[int]) -> dict | None:
+    """
+    Check whether ``liste`` is a complete residue system modulo its own length.
+
+    Returns a dict with the reduced residue system when it is, else None.
+    """
+    n = len(liste)
+    if n == 0:
+        return None
+
+    if len({x % n for x in liste}) != n:
+        return None
+
+    rrs = [x for x in liste if ebob(x, n) == 1]
+    return {"n": n, "is_crs": True, "rrs": rrs, "phi": euler_phi(n)}
+
+
+# English aliases
+gcd = ebob
+lcm = ekok
+ext_gcd = ext_ebob
+
+
+# ---------------------------------------------------------------------------
+# Demo
+# ---------------------------------------------------------------------------
+
+def demo() -> None:
+    """Print a short verification run, mirroring the extension's defaults."""
+    print("--- ENT Python module verification ---")
+    print(f"gcd(12, 18)                = {ebob(12, 18)}")
+    print(f"lcm(12, 18)                = {ekok(12, 18)}")
+    print(f"ext_gcd(21, -35)           = {ext_ebob(21, -35)}   (d must be positive)")
+
+    solution = diophantus_solver(153, -803, 44)
+    if solution is None:
+        print("153x - 803y = 44          -> no integer solution")
     else:
-        print("Saglayan cozumler = ", saglayan_cozumler)
-        return saglayan_cozumler
+        print(
+            f"153x - 803y = 44          -> d = {solution['d']}, "
+            f"x0 = {solution['x0']}, y0 = {solution['y0']}, "
+            f"x(t) = x0 + ({solution['step_x']})t, y(t) = y0 + ({solution['step_y']})t"
+        )
+
+    print(f"140x = 133 (mod 301)       -> {solve_linear_congruence(140, 133, 301)}")
+    print(f"prime factors of 301       = {asal_bolenler(301)}")
+    print(f"factorisation of 24000     = {prime_factorization(24000)}")
+    print(f"tau(24000), sigma(24000)   = {tau(24000)}, {sigma(24000)}")
+    print(f"phi(24000)                 = {euler_phi(24000)}")
+    print(f"mu(30), mu(12)             = {mobius(30)}, {mobius(12)}")
+    print(f"crt x=2(3), 3(5), 2(7)     = {crt([(2, 3), (3, 5), (2, 7)])}")
+    print(f"ord_7(3)                   = {multiplicative_order(3, 7)}")
+    print(f"(10/13) Legendre           = {legendre_symbol(10, 13)}")
+    print(f"(1001/9907) Jacobi         = {jacobi_symbol(1001, 9907)}")
+    print(f"is_prime(561) [Carmichael] = {is_prime(561)}")
 
 
-def euler_phi(lets_go):
-    liste2 = []
-    liste3 = []
-    iks_elemanlari = []
-
-    if lets_go > 0:
-        liste5 = list(range(lets_go))
-    else:
-        liste5 = lets_go
-
-    n = len(liste5)
-
-    for i in range(n):
-        for k in range(n):
-            if i != k:
-                if liste5[i] % n == liste5[k] % n:
-                    liste2.append(liste5[i])
-                    liste3.append((i + 1, k + 1))
-
-    if not liste2:
-        # print("Liste bir tam kalan sistemidir.")
-        # print(liste5)
-        for x in liste5:
-            if ebob(n, x) == 1:
-                iks_elemanlari.append(x)
-        # print("Indirgenmis kalan sistemi = ", iks_elemanlari)
-        # print("IKS eleman sayisi / EulerPhi(n)= ", len(iks_elemanlari), "\n")
-        sss = len(iks_elemanlari)
-        return sss
-    else:
-        # print("Tam kalan sistemi degildir.")
-        # print("hangi iki element m modülüne göre denktir. listedeki sıraları : (i,k) = ", liste3)
-        # print(liste2)
-        return False
-
-
-def asal_bolenler(integer):
-    sayinin_asal_bolenleri = []
-
-    prime_numbers_plus_one = [1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
-               31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
-               73, 79, 83, 89, 97, 101, 103, 107, 109, 113,
-               127, 131, 137, 139, 149, 151, 157, 163, 167, 173,
-               179, 181, 191, 193, 197, 199, 211, 223, 227, 229,
-               233, 239, 241, 251, 257, 263, 269, 271, 277, 281,
-               283, 293, 307, 311, 313, 317, 331, 337, 347, 349,
-               353, 359, 367, 373, 379, 383, 389, 397, 401, 409,
-               419, 421, 431, 433, 439, 443, 449, 457, 461, 463,
-               467, 479, 487, 491, 499, 503, 509, 521, 523, 541,
-               547, 557, 563, 569, 571, 577, 587, 593, 599, 601,
-               607, 613, 617, 619, 631, 641, 643, 647, 653, 659,
-               661, 673, 677, 683, 691, 701, 709, 719, 727, 733,
-               739, 743, 751, 757, 761, 769, 773, 787, 797, 809,
-               811, 821, 823, 827, 829, 839, 853, 857, 859, 863,
-               877, 881, 883, 887, 907, 911, 919, 929, 937, 941,
-               947, 953, 967, 971, 977, 983, 991, 997, 1009, 1013,
-               1019, 1021, 1031, 1033, 1039, 1049, 1051, 1061, 1063, 1069,
-               1087, 1091, 1093, 1097, 1103, 1109, 1117, 1123, 1129, 1151,
-               1153, 1163, 1171, 1181, 1187, 1193, 1201, 1213, 1217, 1223,
-               1229, 1231, 1237, 1249, 1259, 1277, 1279, 1283, 1289, 1291,
-               1297, 1301, 1303, 1307, 1319, 1321, 1327, 1361, 1367, 1373,
-               1381, 1399, 1409, 1423, 1427, 1429, 1433, 1439, 1447, 1451,
-               1453, 1459, 1471, 1481, 1483, 1487, 1489, 1493, 1499, 1511,
-               1523, 1531, 1543, 1549, 1553, 1559, 1567, 1571, 1579, 1583,
-               1597, 1601, 1607, 1609, 1613, 1619, 1621, 1627, 1637, 1657,
-               1663, 1667, 1669, 1693, 1697, 1699, 1709, 1721, 1723, 1733,
-               1741, 1747, 1753, 1759, 1777, 1783, 1787, 1789, 1801, 1811,
-               1823, 1831, 1847, 1861, 1867, 1871, 1873, 1877, 1879, 1889,
-               1901, 1907, 1913, 1931, 1933, 1949, 1951, 1973, 1979, 1987,
-               1993, 1997, 1999, 2003, 2011, 2017, 2027, 2029, 2039, 2053,
-               2063, 2069, 2081, 2083, 2087, 2089, 2099, 2111, 2113, 2129,
-               2131, 2137, 2141, 2143, 2153, 2161, 2179, 2203, 2207, 2213,
-               2221, 2237, 2239, 2243, 2251, 2267, 2269, 2273, 2281, 2287,
-               2293, 2297, 2309, 2311, 2333, 2339, 2341, 2347, 2351, 2357,
-               2371, 2377, 2381, 2383, 2389, 2393, 2399, 2411, 2417, 2423,
-               2437, 2441, 2447, 2459, 2467, 2473, 2477, 2503, 2521, 2531,
-               2539, 2543, 2549, 2551, 2557, 2579, 2591, 2593, 2609, 2617,
-               2621, 2633, 2647, 2657, 2659, 2663, 2671, 2677, 2683, 2687,
-               2689, 2693, 2699, 2707, 2711, 2713, 2719, 2729, 2731, 2741,
-               2749, 2753, 2767, 2777, 2789, 2791, 2797, 2801, 2803, 2819,
-               2833, 2837, 2843, 2851, 2857, 2861, 2879, 2887, 2897, 2903,
-               2909, 2917, 2927, 2939, 2953, 2957, 2963, 2969, 2971, 2999,
-               3001, 3011, 3019, 3023, 3037, 3041, 3049, 3061, 3067, 3079,
-               3083, 3089, 3109, 3119, 3121, 3137, 3163, 3167, 3169, 3181,
-               3187, 3191, 3203, 3209, 3217, 3221, 3229, 3251, 3253, 3257,
-               3259, 3271, 3299, 3301, 3307, 3313, 3319, 3323, 3329, 3331,
-               3343, 3347, 3359, 3361, 3371, 3373, 3389, 3391, 3407, 3413,
-               3433, 3449, 3457, 3461, 3463, 3467, 3469, 3491, 3499, 3511,
-               3517, 3527, 3529, 3533, 3539, 3541, 3547, 3557, 3559, 3571,
-               3581, 3583, 3593, 3607, 3613, 3617, 3623, 3631, 3637, 3643,
-               3659, 3671, 3673, 3677, 3691, 3697, 3701, 3709, 3719, 3727,
-               3733, 3739, 3761, 3767, 3769, 3779, 3793, 3797, 3803, 3821,
-               3823, 3833, 3847, 3851, 3853, 3863, 3877, 3881, 3889, 3907,
-               3911, 3917, 3919, 3923, 3929, 3931, 3943, 3947, 3967, 3989,
-               4001, 4003, 4007, 4013, 4019, 4021, 4027, 4049, 4051, 4057,
-               4073, 4079, 4091, 4093, 4099, 4111, 4127, 4129, 4133, 4139,
-               4153, 4157, 4159, 4177, 4201, 4211, 4217, 4219, 4229, 4231,
-               4241, 4243, 4253, 4259, 4261, 4271, 4273, 4283, 4289, 4297,
-               4327, 4337, 4339, 4349, 4357, 4363, 4373, 4391, 4397, 4409,
-               4421, 4423, 4441, 4447, 4451, 4457, 4463, 4481, 4483, 4493,
-               4507, 4513, 4517, 4519, 4523, 4547, 4549, 4561, 4567, 4583,
-               4591, 4597, 4603, 4621, 4637, 4639, 4643, 4649, 4651, 4657,
-               4663, 4673, 4679, 4691, 4703, 4721, 4723, 4729, 4733, 4751,
-               4759, 4783, 4787, 4789, 4793, 4799, 4801, 4813, 4817, 4831,
-               4861, 4871, 4877, 4889, 4903, 4909, 4919, 4931, 4933, 4937,
-               4943, 4951, 4957, 4967, 4969, 4973, 4987, 4993, 4999, 5003,
-               5009, 5011, 5021, 5023, 5039, 5051, 5059, 5077, 5081, 5087,
-               5099, 5101, 5107, 5113, 5119, 5147, 5153, 5167, 5171, 5179,
-               5189, 5197, 5209, 5227, 5231, 5233, 5237, 5261, 5273, 5279,
-               5281, 5297, 5303, 5309, 5323, 5333, 5347, 5351, 5381, 5387,
-               5393, 5399, 5407, 5413, 5417, 5419, 5431, 5437, 5441, 5443,
-               5449, 5471, 5477, 5479, 5483, 5501, 5503, 5507, 5519, 5521,
-               5527, 5531, 5557, 5563, 5569, 5573, 5581, 5591, 5623, 5639,
-               5641, 5647, 5651, 5653, 5657, 5659, 5669, 5683, 5689, 5693,
-               5701, 5711, 5717, 5737, 5741, 5743, 5749, 5779, 5783, 5791,
-               5801, 5807, 5813, 5821, 5827, 5839, 5843, 5849, 5851, 5857,
-               5861, 5867, 5869, 5879, 5881, 5897, 5903, 5923, 5927, 5939,
-               5953, 5981, 5987, 6007, 6011, 6029, 6037, 6043, 6047, 6053,
-               6067, 6073, 6079, 6089, 6091, 6101, 6113, 6121, 6131, 6133,
-               6143, 6151, 6163, 6173, 6197, 6199, 6203, 6211, 6217, 6221,
-               6229, 6247, 6257, 6263, 6269, 6271, 6277, 6287, 6299, 6301,
-               6311, 6317, 6323, 6329, 6337, 6343, 6353, 6359, 6361, 6367,
-               6373, 6379, 6389, 6397, 6421, 6427, 6449, 6451, 6469, 6473,
-               6481, 6491, 6521, 6529, 6547, 6551, 6553, 6563, 6569, 6571,
-               6577, 6581, 6599, 6607, 6619, 6637, 6653, 6659, 6661, 6673,
-               6679, 6689, 6691, 6701, 6703, 6709, 6719, 6733, 6737, 6761,
-               6763, 6779, 6781, 6791, 6793, 6803, 6823, 6827, 6829, 6833,
-               6841, 6857, 6863, 6869, 6871, 6883, 6899, 6907, 6911, 6917,
-               6947, 6949, 6959, 6961, 6967, 6971, 6977, 6983, 6991, 6997,
-               7001, 7013, 7019, 7027, 7039, 7043, 7057, 7069, 7079, 7103,
-               7109, 7121, 7127, 7129, 7151, 7159, 7177, 7187, 7193, 7207,
-               7211, 7213, 7219, 7229, 7237, 7243, 7247, 7253, 7283, 7297,
-               7307, 7309, 7321, 7331, 7333, 7349, 7351, 7369, 7393, 7411,
-               7417, 7433, 7451, 7457, 7459, 7477, 7481, 7487, 7489, 7499,
-               7507, 7517, 7523, 7529, 7537, 7541, 7547, 7549, 7559, 7561,
-               7573, 7577, 7583, 7589, 7591, 7603, 7607, 7621, 7639, 7643,
-               7649, 7669, 7673, 7681, 7687, 7691, 7699, 7703, 7717, 7723,
-               7727, 7741, 7753, 7757, 7759, 7789, 7793, 7817, 7823, 7829,
-               7841, 7853, 7867, 7873, 7877, 7879, 7883, 7901, 7907, 7919]
-
-    for x in prime_numbers_plus_one:
-        if integer % x == 0:
-            sayinin_asal_bolenleri.append(x)
-
-    print(sayinin_asal_bolenleri)
-    return sayinin_asal_bolenleri
-
-
-def p_times_i_plus_one_equals_square_of_a_number(p):
-    asallar = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
-               31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
-               73, 79, 83, 89, 97, 101, 103, 107, 109, 113,
-               127, 131, 137, 139, 149, 151, 157, 163, 167, 173,
-               179, 181, 191, 193, 197, 199, 211, 223, 227, 229,
-               233, 239, 241, 251, 257, 263, 269, 271, 277, 281,
-               283, 293, 307, 311, 313, 317, 331, 337, 347, 349,
-               353, 359, 367, 373, 379, 383, 389, 397, 401, 409,
-               419, 421, 431, 433, 439, 443, 449, 457, 461, 463,
-               467, 479, 487, 491, 499, 503, 509, 521, 523, 541,
-               547, 557, 563, 569, 571, 577, 587, 593, 599, 601,
-               607, 613, 617, 619, 631, 641, 643, 647, 653, 659,
-               661, 673, 677, 683, 691, 701, 709, 719, 727, 733,
-               739, 743, 751, 757, 761, 769, 773, 787, 797, 809,
-               811, 821, 823, 827, 829, 839, 853, 857, 859, 863,
-               877, 881, 883, 887, 907, 911, 919, 929, 937, 941,
-               947, 953, 967, 971, 977, 983, 991, 997, 1009, 1013,
-               1019, 1021, 1031, 1033, 1039, 1049, 1051, 1061, 1063, 1069,
-               1087, 1091, 1093, 1097, 1103, 1109, 1117, 1123, 1129, 1151,
-               1153, 1163, 1171, 1181, 1187, 1193, 1201, 1213, 1217, 1223,
-               1229, 1231, 1237, 1249, 1259, 1277, 1279, 1283, 1289, 1291,
-               1297, 1301, 1303, 1307, 1319, 1321, 1327, 1361, 1367, 1373,
-               1381, 1399, 1409, 1423, 1427, 1429, 1433, 1439, 1447, 1451,
-               1453, 1459, 1471, 1481, 1483, 1487, 1489, 1493, 1499, 1511,
-               1523, 1531, 1543, 1549, 1553, 1559, 1567, 1571, 1579, 1583,
-               1597, 1601, 1607, 1609, 1613, 1619, 1621, 1627, 1637, 1657,
-               1663, 1667, 1669, 1693, 1697, 1699, 1709, 1721, 1723, 1733,
-               1741, 1747, 1753, 1759, 1777, 1783, 1787, 1789, 1801, 1811,
-               1823, 1831, 1847, 1861, 1867, 1871, 1873, 1877, 1879, 1889,
-               1901, 1907, 1913, 1931, 1933, 1949, 1951, 1973, 1979, 1987,
-               1993, 1997, 1999, 2003, 2011, 2017, 2027, 2029, 2039, 2053,
-               2063, 2069, 2081, 2083, 2087, 2089, 2099, 2111, 2113, 2129,
-               2131, 2137, 2141, 2143, 2153, 2161, 2179, 2203, 2207, 2213,
-               2221, 2237, 2239, 2243, 2251, 2267, 2269, 2273, 2281, 2287,
-               2293, 2297, 2309, 2311, 2333, 2339, 2341, 2347, 2351, 2357,
-               2371, 2377, 2381, 2383, 2389, 2393, 2399, 2411, 2417, 2423,
-               2437, 2441, 2447, 2459, 2467, 2473, 2477, 2503, 2521, 2531,
-               2539, 2543, 2549, 2551, 2557, 2579, 2591, 2593, 2609, 2617,
-               2621, 2633, 2647, 2657, 2659, 2663, 2671, 2677, 2683, 2687,
-               2689, 2693, 2699, 2707, 2711, 2713, 2719, 2729, 2731, 2741,
-               2749, 2753, 2767, 2777, 2789, 2791, 2797, 2801, 2803, 2819,
-               2833, 2837, 2843, 2851, 2857, 2861, 2879, 2887, 2897, 2903,
-               2909, 2917, 2927, 2939, 2953, 2957, 2963, 2969, 2971, 2999,
-               3001, 3011, 3019, 3023, 3037, 3041, 3049, 3061, 3067, 3079,
-               3083, 3089, 3109, 3119, 3121, 3137, 3163, 3167, 3169, 3181,
-               3187, 3191, 3203, 3209, 3217, 3221, 3229, 3251, 3253, 3257,
-               3259, 3271, 3299, 3301, 3307, 3313, 3319, 3323, 3329, 3331,
-               3343, 3347, 3359, 3361, 3371, 3373, 3389, 3391, 3407, 3413,
-               3433, 3449, 3457, 3461, 3463, 3467, 3469, 3491, 3499, 3511,
-               3517, 3527, 3529, 3533, 3539, 3541, 3547, 3557, 3559, 3571,
-               3581, 3583, 3593, 3607, 3613, 3617, 3623, 3631, 3637, 3643,
-               3659, 3671, 3673, 3677, 3691, 3697, 3701, 3709, 3719, 3727,
-               3733, 3739, 3761, 3767, 3769, 3779, 3793, 3797, 3803, 3821,
-               3823, 3833, 3847, 3851, 3853, 3863, 3877, 3881, 3889, 3907,
-               3911, 3917, 3919, 3923, 3929, 3931, 3943, 3947, 3967, 3989,
-               4001, 4003, 4007, 4013, 4019, 4021, 4027, 4049, 4051, 4057,
-               4073, 4079, 4091, 4093, 4099, 4111, 4127, 4129, 4133, 4139,
-               4153, 4157, 4159, 4177, 4201, 4211, 4217, 4219, 4229, 4231,
-               4241, 4243, 4253, 4259, 4261, 4271, 4273, 4283, 4289, 4297,
-               4327, 4337, 4339, 4349, 4357, 4363, 4373, 4391, 4397, 4409,
-               4421, 4423, 4441, 4447, 4451, 4457, 4463, 4481, 4483, 4493,
-               4507, 4513, 4517, 4519, 4523, 4547, 4549, 4561, 4567, 4583,
-               4591, 4597, 4603, 4621, 4637, 4639, 4643, 4649, 4651, 4657,
-               4663, 4673, 4679, 4691, 4703, 4721, 4723, 4729, 4733, 4751,
-               4759, 4783, 4787, 4789, 4793, 4799, 4801, 4813, 4817, 4831,
-               4861, 4871, 4877, 4889, 4903, 4909, 4919, 4931, 4933, 4937,
-               4943, 4951, 4957, 4967, 4969, 4973, 4987, 4993, 4999, 5003,
-               5009, 5011, 5021, 5023, 5039, 5051, 5059, 5077, 5081, 5087,
-               5099, 5101, 5107, 5113, 5119, 5147, 5153, 5167, 5171, 5179,
-               5189, 5197, 5209, 5227, 5231, 5233, 5237, 5261, 5273, 5279,
-               5281, 5297, 5303, 5309, 5323, 5333, 5347, 5351, 5381, 5387,
-               5393, 5399, 5407, 5413, 5417, 5419, 5431, 5437, 5441, 5443,
-               5449, 5471, 5477, 5479, 5483, 5501, 5503, 5507, 5519, 5521,
-               5527, 5531, 5557, 5563, 5569, 5573, 5581, 5591, 5623, 5639,
-               5641, 5647, 5651, 5653, 5657, 5659, 5669, 5683, 5689, 5693,
-               5701, 5711, 5717, 5737, 5741, 5743, 5749, 5779, 5783, 5791,
-               5801, 5807, 5813, 5821, 5827, 5839, 5843, 5849, 5851, 5857,
-               5861, 5867, 5869, 5879, 5881, 5897, 5903, 5923, 5927, 5939,
-               5953, 5981, 5987, 6007, 6011, 6029, 6037, 6043, 6047, 6053,
-               6067, 6073, 6079, 6089, 6091, 6101, 6113, 6121, 6131, 6133,
-               6143, 6151, 6163, 6173, 6197, 6199, 6203, 6211, 6217, 6221,
-               6229, 6247, 6257, 6263, 6269, 6271, 6277, 6287, 6299, 6301,
-               6311, 6317, 6323, 6329, 6337, 6343, 6353, 6359, 6361, 6367,
-               6373, 6379, 6389, 6397, 6421, 6427, 6449, 6451, 6469, 6473,
-               6481, 6491, 6521, 6529, 6547, 6551, 6553, 6563, 6569, 6571,
-               6577, 6581, 6599, 6607, 6619, 6637, 6653, 6659, 6661, 6673,
-               6679, 6689, 6691, 6701, 6703, 6709, 6719, 6733, 6737, 6761,
-               6763, 6779, 6781, 6791, 6793, 6803, 6823, 6827, 6829, 6833,
-               6841, 6857, 6863, 6869, 6871, 6883, 6899, 6907, 6911, 6917,
-               6947, 6949, 6959, 6961, 6967, 6971, 6977, 6983, 6991, 6997,
-               7001, 7013, 7019, 7027, 7039, 7043, 7057, 7069, 7079, 7103,
-               7109, 7121, 7127, 7129, 7151, 7159, 7177, 7187, 7193, 7207,
-               7211, 7213, 7219, 7229, 7237, 7243, 7247, 7253, 7283, 7297,
-               7307, 7309, 7321, 7331, 7333, 7349, 7351, 7369, 7393, 7411,
-               7417, 7433, 7451, 7457, 7459, 7477, 7481, 7487, 7489, 7499,
-               7507, 7517, 7523, 7529, 7537, 7541, 7547, 7549, 7559, 7561,
-               7573, 7577, 7583, 7589, 7591, 7603, 7607, 7621, 7639, 7643,
-               7649, 7669, 7673, 7681, 7687, 7691, 7699, 7703, 7717, 7723,
-               7727, 7741, 7753, 7757, 7759, 7789, 7793, 7817, 7823, 7829,
-               7841, 7853, 7867, 7873, 7877, 7879, 7883, 7901, 7907, 7919]
-
-    karesi_olan_sayilar = []
-    p_ler = []
-    for i in range(1000):
-
-        for j in range(len(asallar)):
-
-            if p * asallar[j] + 1 == i * i:
-                p_ler.append(asallar[j])
-                karesi_olan_sayilar.append(i)
-
-    print(karesi_olan_sayilar)
-    print(p_ler)
-
-    return p
-
-
-# print(euler_phi(8))
-# print(euler_phi(5))
-# print(euler_phi(4))
-#
-#
-# diophantus_solver(1,-24,131)
-# diophantus_solver(1,-25,60)
-# diophantus_solver(1,-1,5)
-#
-# euler_phi(50)
-#
-# ekok(12, 6)
-# ekok(1214, 2345)
-# ekok(17, 11)
-#
-# diophantus_solver(21, -35, 24)
-# diophantus_solver(5, 4, 8)
-#
-#
-# lineer_fonksiyon_cozumleri(0, 0, 1, 0, 2, 1, 0, 7)
-# lineer_fonksiyon_cozumleri(1, 1, 1, 0, 1, 1, 0, 5)
-#
-# lineer_kongruens_cozumu(12, 22, 14)
-# lineer_kongruens_cozumu(20, 30, 4)
-# lineer_kongruens_cozumu(353, 400, 254)
-# lineer_kongruens_cozumu(1215, 2755, 560)
-# lineer_kongruens_cozumu(3, 5, 9)
-# lineer_kongruens_cozumu(3, 24, 9)
-# lineer_kongruens_cozumu(5, 11, 19)
-# lineer_kongruens_cozumu(40, 6191, 191)
-# lineer_kongruens_cozumu(18, 50, 42)
-# lineer_kongruens_cozumu(256,337,179)
-#
-#
-# diophantus_solver(153, -803, 44)
-# ebob(301, 140)
-#
-# lineer_kongruens_cozumu(140, 301, 133)
-#
-# asal_bolenler(301)
-#
-# print(euler_phi(4725))
-# print(euler_phi(1250))
-# print(euler_phi(24000))
-
-asal_bolenler(97)
+if __name__ == "__main__":
+    demo()
