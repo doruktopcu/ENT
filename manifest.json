@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Number Theory Lab",
-  "version": "1.0.0",
-  "description": "Interactive solvers, step-by-step derivations, and a theory guide for elementary number theory.",
+  "version": "1.1.0",
+  "description": "Number theory solvers with step-by-step derivations: gcd to CRT, primitive roots, RSA, primality tests, sums of squares and π(x).",
   "action": {
     "default_popup": "popup.html",
     "default_title": "Number Theory Lab",

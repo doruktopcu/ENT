@@ -4,6 +4,7 @@ import { parseBigInt, solveDiophantine } from '../../utils/numberTheoryEngine';
 import MathRender from '../MathRender';
 import { useApp } from '../../context/AppContext';
 import { useAutoSaveHistory, useSolverState } from '../../hooks/useSolverState';
+import LatticePointsPanel from './panels/LatticePointsPanel';
 import {
   EngineMessage,
   IntegerField,
@@ -201,6 +202,7 @@ export default function DiophantineSolver() {
           title={result.hasSolution ? t('solvers.solutionExists') : t('solvers.noSolution')}
         />
       )}
+      <LatticePointsPanel a={a} b={b} c={c} />
     </div>
   );
 }

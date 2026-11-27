@@ -20,10 +20,10 @@ All arithmetic is arbitrary-precision. Each solver shows its derivation, not jus
 | Solver | What it computes |
 | --- | --- |
 | **Extended GCD & LCM** | `gcd(a, b)`, the Bezout identity `au + bv = d`, `lcm(a, b)`, and the full division chain |
-| **Linear Diophantine** | `ax + by = c`: solvability test, a particular solution, and the parametric family `x(t), y(t)` |
+| **Linear Diophantine** | `ax + by = c`: solvability test, a particular solution, the parametric family `x(t), y(t)`, and every solution with x, y > 0 |
 | **Linear congruence** | `ax ≡ b (mod m)`: every incongruent solution, the modular inverse, and the reduction steps |
 | **Modular polynomial** | Roots of degree 1–5 polynomials `f(x) ≡ b (mod m)`, with an evaluation table, plus Hensel lifting to prime powers and CRT recombination for composite `m` |
-| **Euler totient** | `φ(n)`, the complete residue system `ℤₙ`, and the reduced residue system `(ℤ/nℤ)ˣ` |
+| **Euler totient** | `φ(n)`, the complete residue system `ℤₙ`, the reduced residue system `(ℤ/nℤ)ˣ`, and addition / multiplication / power tables for n ≤ 24 |
 | **Prime factorisation** | Canonical decomposition, `τ(n)`, `σ(n)`, the Möbius function `μ(n)`, and the divisor list |
 | **Chinese Remainder** | Systems `cᵢx ≡ aᵢ (mod mᵢ)`: coefficients are reduced first, coprime moduli use the classical construction, and shared factors are merged pairwise with a compatibility check |
 | **Modular exponentiation** | `aᵉ mod m` by square-and-multiply, the order `ordₘ(a)`, and a primitive-root test |
@@ -31,8 +31,13 @@ All arithmetic is arbitrary-precision. Each solver shows its derivation, not jus
 | **Primitive roots & discrete logs** | Existence (`n = 2, 4, pᵏ, 2pᵏ`), the test lemma, every primitive root, a table of indices, and `xᵏ ≡ a` / `bˣ ≡ a` via indices |
 | **Cryptography** | Caesar and affine ciphers, the exponent cipher, Diffie–Hellman key exchange, RSA, and two-of-three CRT secret sharing, using the textbook's A = 1 … Z = 26 block encoding |
 | **Primality tests** | Wilson's theorem, the Fermat test, Miller's test step by step, strong pseudoprimes with a liar count, and Korselt's criterion for Carmichael numbers |
+| **Factoring & special primes** | Fermat factoring, Pollard rho with its rounds, Fermat numbers with Euler-form factors, Lucas–Lehmer for Mersenne primes and the perfect numbers they give |
+| **Sums of squares** | Which n are a² + b² (with r₂(n) and the Gaussian factorisation of primes), three- and four-square representations, and every Pythagorean triple up to a bound |
+| **Pell's equation & curves** | x² − dy² = 1 from the continued fraction of √d plus composition, the negative Pell equation, and integer points on y² = x³ + k |
+| **Arithmetic functions** | σₖ, φ, μ, λ, Λ, ω, Ω, abundancy, perfect / abundant / amicable numbers, aliquot sequences, Thabit's rule, Dirichlet products and Möbius inversion |
+| **Distribution of primes** | Sieve of Eratosthenes, π(x) against Li(x) and x/ln x (charted), prime races mod 4 and mod 3, twin primes, average orders of τ, σ, φ, and ζ(s) |
 
-The last three solvers, and the extensions to CRT, polynomial and quadratic congruences, follow
+The last eight solvers, and the extensions to the other solvers, follow
 Crisman's *Number Theory: In Context and Interactive*. See [Reference textbook](#reference-textbook).
 
 ### Beyond the solvers
@@ -97,7 +102,8 @@ enumeration, `φ` against counting coprimes, congruences against exhaustive sear
 symbol against enumerating squares, primality against a sieve. `bookAdditions.test.js` does the
 same for the textbook-derived functions (square roots mod n for every n ≤ 250, Hensel lifting,
 primitive roots, Miller's test against the textbook strong-probable-prime definition, Korselt
-against brute force), and also pins the book's own worked examples, cited by number. The i18n tests assert that the
+against brute force), and also pins the book's own worked examples, cited by number;
+`bookEngineTier2.test.js` covers the later chapters the same way. The i18n tests assert that the
 English and Turkish trees have identical key paths and placeholders, that no string is empty,
 and that no Turkish-only term (EBOB, EKOK, TKS, İKS) appears in English-facing copy. The settings
 tests cover clamping, enum validation and recovery from junk in storage.
@@ -106,7 +112,8 @@ tests cover clamping, enum validation and recovery from junk in storage.
 
 ```
 src/
-  utils/numberTheoryEngine.js   All mathematics. Returns error codes, never prose.
+  utils/numberTheoryEngine.js   Core mathematics. Returns error codes, never prose.
+  utils/bookEngineTier2.js      Textbook chapters 3, 6, 8, 12–15, 18–24 (same contract).
   i18n/translations.js          English + Turkish. The single source of UI text.
   config/topics.js              Topic registry and search keywords.
   config/settings.js            Preference defaults, bounds and validation.
@@ -144,8 +151,7 @@ ent.crt([(2, 3), (3, 5), (2, 7)])  # (23, 105)
 ent.is_prime(561)                  # False — Carmichael numbers do not slip through
 ```
 
-The textbook-derived additions (primitive roots, cryptography, primality tests, Hensel lifting,
-square roots mod n, general CRT) exist only in the JavaScript engine for now.
+The textbook-derived additions exist only in the JavaScript engine for now.
 
 ---
 

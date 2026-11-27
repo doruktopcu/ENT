@@ -257,6 +257,164 @@ export const translations = {
         scanFallback:
           'gcd(2a, {n}) ≠ 1, so completing the square would mean dividing by a non-unit. Every x was checked directly instead.',
       },
+      squares: {
+        modeTwo: 'Two squares',
+        modeMore: 'Three & four squares',
+        modePythagorean: 'Pythagorean triples',
+        isSum: '{n} is a sum of two squares',
+        isNotSum: '{n} is not a sum of two squares',
+        criterion:
+          'n = a² + b² exactly when every prime p ≡ 3 (mod 4) divides n to an even power. r₂(n) counts all ordered, signed pairs (a, b).',
+        oddPower: 'odd power of p ≡ 3',
+        representations: 'Representations a² + b² with 0 ≤ a ≤ b',
+        tooLargeToList:
+          'n is too large to list the representations; the criterion and r₂(n) are exact.',
+        lagrangeHeading: 'Four squares always suffice',
+        threeObstructed: '{n} = 4^{a}·(8·{b} + 7), so it is not a sum of three squares.',
+        lagrangeNote:
+          'Lagrange: every non-negative integer is a sum of four squares. Legendre: three squares suffice unless n = 4ᵃ(8b + 7).',
+        fromPQ: 'Triple from (p, q)',
+        primitive: 'Primitive triple ({x}, {y}, {z}); triangle area {area}.',
+        notPrimitive:
+          '({x}, {y}, {z}) is a triple but not primitive: p and q must be coprime and of opposite parity.',
+        tripleCount: '{count} triples with hypotenuse ≤ {n}, {primitive} of them primitive',
+      },
+      curves: {
+        modePell: "Pell's equation",
+        modeMordell: 'Mordell curves',
+        pellHeading: 'Solutions of x² − dy² = 1',
+        cfExplain:
+          'The continued fraction of √d repeats with period {length}; the fundamental solution sits at the end of the first (or, for odd length, second) period.',
+        compositionExplain:
+          'Every further solution comes from multiplying by the fundamental one — the "doubling" and "adding" of points on the hyperbola.',
+        negativeYes: 'The period is odd, so x² − {d}y² = −1 also has a solution: ({x}, {y}).',
+        negativeNo: 'The period is even, so x² − {d}y² = −1 has no solution.',
+        mordellCount: '{count} integer point(s) with |x| ≤ {bound}',
+        mordellNote:
+          'A search can only find points; proving none exist beyond the bound needs congruence arguments like those in §15.3.',
+      },
+      factoring: {
+        modeFermat: 'Fermat factoring',
+        modeRho: 'Pollard rho',
+        modeFermatNumbers: 'Fermat numbers',
+        modeMersenne: 'Mersenne & Lucas–Lehmer',
+        explain: {
+          fermat:
+            'Write n = s² − t² = (s + t)(s − t): start at s = ⌈√n⌉ and step up until s² − n is a perfect square. Fast when the two factors are close.',
+          rho:
+            'Iterate x ↦ x² + c (mod n) and compare xₖ with x₂ₖ. A non-trivial gcd(x₂ₖ − xₖ, n) is a factor — often found long before trial division would.',
+          fermatNumbers:
+            'Fermat conjectured that every Fₖ = 2^(2ᵏ) + 1 is prime. Only F₀ … F₄ are known to be; Euler found 641 | F₅.',
+          mersenne:
+            'Mₚ = 2ᵖ − 1 can only be prime when p is. The Lucas–Lehmer test decides it with p − 2 squarings, and each Mersenne prime gives an even perfect number.',
+        },
+        fermatFound: 'Found after {tries} value(s) of s',
+        fermatGaveUp: 'No factor after {tries} values of s',
+        perfectSquare: 'Square?',
+        trivial: 'Only the trivial factorisation n · 1 appeared, so n is prime.',
+        rhoFound: 'Factor found in round {k}',
+        rhoFailed: 'The cycle closed without a factor. Try another seed or constant c.',
+        fermatPrime: 'F{k} is prime',
+        fermatComposite: 'F{k} is composite',
+        value: 'Value',
+        digits: 'Digits',
+        fermatFactor: 'Factor {d} = {j}·2^{k2} + 1; cofactor {cofactor}.',
+        noSmallFactor: 'No factor of the form j·2^(k+2) + 1 was found within the search limit.',
+        mersennePrime: '2^{p} − 1 is a Mersenne prime',
+        mersenneComposite: '2^{p} − 1 is composite',
+        compositeExponent:
+          '{p} is composite, and 2ᵃ − 1 divides 2^(ab) − 1; here {divisor} is a factor.',
+        perfect: 'Perfect number 2^({p} − 1)·(2^{p} − 1) = {value}',
+      },
+      arith: {
+        modeProfile: 'Profile of n',
+        modeDirichlet: 'Dirichlet product',
+        modeInversion: 'Möbius inversion',
+        modeThabit: "Thabit's rule",
+        fn: {
+          I: 'identity',
+          u: 'constant 1',
+          N: 'n itself',
+          mu: 'Möbius',
+          phi: 'Euler phi',
+          tau: 'number of divisors',
+          sigma: 'sum of divisors',
+          lambda: 'Liouville',
+          mu2: 'squarefree indicator',
+        },
+        kind: {
+          perfect: '{n} is perfect: σ(n) = 2n',
+          abundant: '{n} is abundant: σ(n) > 2n',
+          deficient: '{n} is deficient: σ(n) < 2n',
+        },
+        multiplyPerfect: '{n} is {k}-perfect: σ(n) = {k}n.',
+        aliquotHeading: 'Aliquot sequence n → σ(n) − n',
+        amicable: '{n} and {m} are amicable: each is the sum of the other’s proper divisors.',
+        notAmicable: '{n} has no amicable partner.',
+        productMatches: '{f} ⋆ {g} = {h}',
+        productNew: '{f} ⋆ {g} is not one of the listed functions',
+        inversionWorks: 'Möbius inversion recovers {g}',
+        inversionFails: 'Inversion did not recover g',
+        inversionF: 'Here f = {g} ⋆ u = {f}.',
+        thabitWorks: 'n = {n}: all three numbers are prime, so the rule gives an amicable pair',
+        thabitFails: 'n = {n}: not all three numbers are prime, so the rule gives nothing',
+      },
+      dist: {
+        modeSieve: 'Sieve',
+        modeCounting: 'π(x) vs Li(x)',
+        modeRace: 'Prime races',
+        modeTwins: 'Twin primes',
+        modeAverages: 'Average orders',
+        modeZeta: 'Zeta function',
+        raceMod4: 'mod 4',
+        raceMod3: 'mod 3',
+        raceModulus: 'Race modulus',
+        explain: {
+          sieve: 'Cross out the multiples of every prime p ≤ √n; whatever survives is prime.',
+          counting:
+            'The Prime Number Theorem: π(x) ~ x / ln x. Gauss’s logarithmic integral Li(x) = ∫₂ˣ dt / ln t is a far better estimate.',
+          race:
+            'Count primes in each residue class. Both teams are infinite, but the non-residue team leads almost all the time (Chebyshev’s bias).',
+          twins:
+            'Pairs p, p + 2 that are both prime. Nobody knows whether there are infinitely many; the Hardy–Littlewood heuristic predicts how many.',
+          averages:
+            'Individual values of τ, σ and φ jump around, but their averages grow smoothly.',
+          zeta:
+            'For real s > 1, ζ(s) is both a sum over all n and a product over all primes — the link between primes and analysis.',
+        },
+        sieveCount: '{count} primes up to {n}',
+        sievingPrimes: 'Sieving primes (p ≤ √n): {primes}',
+        sieveGrid: 'Sieve grid',
+        sieveLegend:
+          'Green numbers survive; the small subscript is the prime that crossed a number out first.',
+        countingHeading: 'Counting primes up to {x}',
+        errorChart: 'Error of each estimate, Li(x) − π(x) and x/ln x − π(x)',
+      pntNote:
+          'Li(x) stays above π(x) throughout this range, yet Littlewood proved the lead changes sign infinitely often.',
+        raceHeading: 'Primes mod {m} up to {x}',
+        raceFirstLead: 'The 1 (mod {m}) team first takes the lead at {x}.',
+        raceNeverLeads: 'Up to {x}, primes ≡ 1 (mod {m}) never lead the ≡ {other} team.',
+        raceChanges: 'Lead changes (x → leading class): {list}',
+        twinsHeading: '{count} twin prime pairs up to {x}',
+        twinsNote:
+          'C₂ ≈ 0.6601 is the twin prime constant. The estimate is a conjecture, not a theorem.',
+        averagesHeading: 'Averages up to {x}',
+        zetaHeading: 'ζ({s}) with {n} terms',
+        tailBound: 'Tail bound N^(1−s)/(s − 1)',
+        exactValue: 'Exact value',
+      },
+      lattice: {
+        heading: '{count} solution(s) with x > 0 and y > 0',
+        explain:
+          'Positivity cuts the parameter t down to an interval, so counting positive solutions is counting integers in it.',
+      },
+      groups: {
+        heading: 'Tables of ℤ{n}',
+        multiplication: 'Multiplication',
+        addition: 'Addition',
+        powers: 'Powers',
+        units: 'Units (highlighted): {units}. Orders: {orders}.',
+      },
     },
 
     fields: {
@@ -300,6 +458,23 @@ export const translations = {
       shareModulus2: 'Modulus m₂',
       shareModulus3: 'Modulus m₃',
       coefficientC: 'Coefficient c',
+      hypotenuseLimit: 'Hypotenuse up to N',
+      parameterP: 'Parameter p',
+      parameterQ: 'Parameter q',
+      nonSquareD: 'Non-square d',
+      constantK: 'Constant k',
+      searchBound: 'Search |x| up to',
+      oddIntegerN: 'Odd integer n',
+      seed: 'Seed x₀',
+      polynomialShift: 'Constant c in x² + c',
+      indexK: 'Index k',
+      exponentP: 'Exponent p',
+      functionF: 'Function f',
+      functionG: 'Function g',
+      upToN: 'Up to n',
+      upToX: 'Up to x',
+      realS: 'Real s > 1',
+      termsN: 'Terms N',
     },
 
     workbench: {
@@ -456,6 +631,31 @@ export const translations = {
         description:
           "Wilson's theorem, the Fermat and Miller tests, strong pseudoprimes and Carmichael numbers",
       },
+      factoring: {
+        title: 'Factoring methods & special primes',
+        description:
+          'Fermat factoring, Pollard rho, Fermat numbers, Mersenne primes via Lucas–Lehmer, and perfect numbers',
+      },
+      sums_of_squares: {
+        title: 'Sums of squares & Pythagorean triples',
+        description:
+          'Which n are a² + b², r₂(n), three and four squares, Gaussian factors and all Pythagorean triples',
+      },
+      pell_curves: {
+        title: "Pell's equation & curves",
+        description:
+          'x² − dy² = 1 via continued fractions and composition; integer points on y² = x³ + k',
+      },
+      arithmetic_functions: {
+        title: 'Arithmetic functions',
+        description:
+          'σₖ, μ, λ, Λ, perfect and amicable numbers, aliquot sequences, Dirichlet products and Möbius inversion',
+      },
+      prime_distribution: {
+        title: 'Distribution of primes',
+        description:
+          'Sieve of Eratosthenes, π(x) against Li(x), prime races, twin primes, average orders and ζ(s)',
+      },
     },
 
     insights: {
@@ -548,6 +748,45 @@ export const translations = {
           'n \\text{ prime} \\iff (n-1)! \\equiv -1 \\pmod{n}, \\qquad p \\text{ prime} \\implies a^{p-1} \\equiv 1 \\pmod{p}',
         history:
           'Ibn al-Haytham stated Wilson’s theorem around 1000 and Lagrange proved it in 1771. Korselt gave his criterion in 1899 and Robert Carmichael produced the first examples in 1910–12; Miller (1976) and Rabin (1980) made Miller’s test the standard probabilistic primality test.',
+      },
+      factoring: {
+        pedagogy:
+          'Primality is easy to test but factoring is hard — that gap is what RSA relies on. Fermat’s method attacks factors near √n; Pollard rho walks a pseudo-random sequence until two terms collide modulo a hidden factor.',
+        theorem:
+          'n = s^2 - t^2 = (s+t)(s-t), \\qquad M_p \\text{ prime} \\iff x_{p-2} \\equiv 0 \\pmod{M_p}',
+        history:
+          'Fermat described his method in 1643; Euler factored F₅ in 1732; Lucas (1876) and Lehmer (1930) gave the Mersenne test; Pollard published rho in 1975.',
+      },
+      sums_of_squares: {
+        pedagogy:
+          'Products of sums of two squares are again sums of two squares, so everything reduces to primes: 2 and every p ≡ 1 (mod 4) are sums of two squares, and p ≡ 3 (mod 4) never is.',
+        theorem:
+          'n = a^2 + b^2 \\iff p^{e} \\parallel n,\\ p \\equiv 3 \\!\\!\\pmod 4 \\implies 2 \\mid e',
+        history:
+          'Fermat stated the two-squares theorem in 1640 and Euler proved it in 1749; Lagrange proved the four-squares theorem in 1770.',
+      },
+      pell_curves: {
+        pedagogy:
+          'A conic with one rational point has infinitely many, found by drawing lines. On the hyperbola x² − dy² = 1 the integer points form a group: compose (x₁ + y₁√d)ᵏ to get them all.',
+        theorem: '(x_1 + y_1\\sqrt{d})^k = x_k + y_k\\sqrt{d} \\implies x_k^2 - d\\,y_k^2 = 1',
+        history:
+          'Brahmagupta (628) found the composition rule; Lagrange (1768) proved that Pell’s equation always has a solution. Euler misattributed it to John Pell.',
+      },
+      arithmetic_functions: {
+        pedagogy:
+          'Multiplicative functions are determined by prime powers. Under the Dirichlet product they form a group with identity I, and μ is the inverse of the constant function u — which is Möbius inversion.',
+        theorem:
+          'f = g \\star u \\iff g = f \\star \\mu, \\qquad (f \\star g)(n) = \\sum_{d \\mid n} f(d)\\, g(n/d)',
+        history:
+          'Euclid proved that 2ᵖ⁻¹(2ᵖ − 1) is perfect when 2ᵖ − 1 is prime, and Euler proved the converse for even numbers; Thabit ibn Qurra gave his amicable rule in the ninth century; Möbius introduced μ in 1832.',
+      },
+      prime_distribution: {
+        pedagogy:
+          'Primes look random individually but are regular in bulk: near x roughly one number in ln x is prime. Analytic tools — Li(x), ζ(s) — make that precise.',
+        theorem:
+          '\\pi(x) \\sim \\frac{x}{\\ln x} \\sim \\mathrm{Li}(x), \\qquad \\zeta(s) = \\sum_{n \\ge 1} n^{-s} = \\prod_p \\left(1 - p^{-s}\\right)^{-1}',
+        history:
+          'Gauss conjectured the Prime Number Theorem as a teenager; Hadamard and de la Vallée Poussin proved it independently in 1896, using Riemann’s ζ.',
       },
     },
 
@@ -670,6 +909,25 @@ export const translations = {
         '{x} and {y} share the factor {gcd}; the moduli and p must be pairwise coprime.',
       sharingThresholdFails: 'Need m₁m₂ > p·m₃ (with m₁ < m₂ < m₃), but {M} ≤ {pm}.',
       sharingTTooLarge: 't is too large: K + tp must stay below m₁m₂, so t ≤ {max}.',
+      latticeNeedsPositive: 'Counting positive solutions needs a > 0 and b > 0.',
+      pythagoreanNeedsPQ: 'Choose integers 1 ≤ p < q.',
+      tripleLimitRange: 'Choose a hypotenuse bound between 5 and {max}.',
+      sieveRange: 'The sieve lists primes for 2 ≤ n ≤ {max}.',
+      groupTableRange: 'Tables are drawn for 2 ≤ n ≤ {max}.',
+      fermatIndexRange: 'Choose 0 ≤ k ≤ {max}.',
+      lucasLehmerRange: 'Choose an exponent 2 ≤ p ≤ {max}.',
+      fermatFactorNeedsOdd: "Fermat's method needs an odd n ≥ 3 (divide out factors of 2 first).",
+      rhoNeedsComposite: '{n} is prime, so there is nothing to factor.',
+      squaresTooLarge: 'Representations are searched for n ≤ {max}.',
+      pellNeedsD: 'Choose d ≥ 2.',
+      pellSquare: '{d} is a perfect square, so x² − dy² = 1 only has the trivial solutions.',
+      pellPeriodTooLong: 'The continued fraction period exceeds {max} terms.',
+      mordellZero: 'For k = 0 every (t², t³) is a point; choose k ≠ 0.',
+      mordellBoundRange: 'Choose a search bound between 1 and {max}.',
+      thabitRange: 'Choose 2 ≤ n ≤ 64.',
+      dirichletRange: 'Choose 1 ≤ n ≤ {max}.',
+      countingRange: 'Choose a value between {min} and {max}.',
+      zetaNeedsS: 'The series converges only for s > 1 (this tool accepts s ≤ 64).',
     },
 
     wiki: {
@@ -1019,6 +1277,163 @@ export const translations = {
         scanFallback:
           'EBOB(2a, {n}) ≠ 1, bu yüzden kareye tamamlamak birim olmayan bir sayıya bölmeyi gerektirirdi. Bunun yerine her x doğrudan denendi.',
       },
+      squares: {
+        modeTwo: 'İki kare',
+        modeMore: 'Üç ve dört kare',
+        modePythagorean: 'Pisagor üçlüleri',
+        isSum: '{n} iki karenin toplamıdır',
+        isNotSum: '{n} iki karenin toplamı değildir',
+        criterion:
+          'n = a² + b² ancak ve ancak p ≡ 3 (mod 4) olan her asal n’yi çift kuvvetle bölüyorsa mümkündür. r₂(n), sıralı ve işaretli tüm (a, b) çiftlerini sayar.',
+        oddPower: 'p ≡ 3 tek kuvvette',
+        representations: '0 ≤ a ≤ b olan a² + b² gösterimleri',
+        tooLargeToList: 'n gösterimleri listelemek için çok büyük; kriter ve r₂(n) kesindir.',
+        lagrangeHeading: 'Dört kare her zaman yeter',
+        threeObstructed: '{n} = 4^{a}·(8·{b} + 7), dolayısıyla üç karenin toplamı değildir.',
+        lagrangeNote:
+          'Lagrange: negatif olmayan her tam sayı dört karenin toplamıdır. Legendre: n = 4ᵃ(8b + 7) değilse üç kare yeter.',
+        fromPQ: '(p, q) çiftinden üçlü',
+        primitive: 'İlkel üçlü ({x}, {y}, {z}); üçgen alanı {area}.',
+        notPrimitive:
+          '({x}, {y}, {z}) bir üçlüdür ama ilkel değildir: p ve q aralarında asal ve farklı paritede olmalıdır.',
+        tripleCount: 'Hipotenüsü ≤ {n} olan {count} üçlü, bunların {primitive} tanesi ilkel',
+      },
+      curves: {
+        modePell: 'Pell denklemi',
+        modeMordell: 'Mordell eğrileri',
+        pellHeading: 'x² − dy² = 1 denkleminin çözümleri',
+        cfExplain:
+          '√d sayısının sürekli kesri {length} uzunluğunda bir periyotla tekrar eder; temel çözüm ilk periyodun (uzunluk tekse ikinci periyodun) sonundadır.',
+        compositionExplain:
+          'Sonraki her çözüm temel çözümle çarpılarak elde edilir — hiperbol üzerindeki noktaların “ikilenmesi” ve “toplanması”.',
+        negativeYes:
+          'Periyot tek, dolayısıyla x² − {d}y² = −1 denkleminin de çözümü vardır: ({x}, {y}).',
+        negativeNo: 'Periyot çift, dolayısıyla x² − {d}y² = −1 denkleminin çözümü yoktur.',
+        mordellCount: '|x| ≤ {bound} için {count} tam sayı noktası',
+        mordellNote:
+          'Arama yalnızca nokta bulabilir; sınırın ötesinde nokta olmadığını kanıtlamak §15.3’tekiler gibi kongrüans argümanları gerektirir.',
+      },
+      factoring: {
+        modeFermat: 'Fermat çarpanlama',
+        modeRho: 'Pollard rho',
+        modeFermatNumbers: 'Fermat sayıları',
+        modeMersenne: 'Mersenne ve Lucas–Lehmer',
+        explain: {
+          fermat:
+            'n = s² − t² = (s + t)(s − t) yaz: s = ⌈√n⌉ ile başla ve s² − n tam kare olana kadar artır. İki çarpan birbirine yakınsa hızlıdır.',
+          rho:
+            'x ↦ x² + c (mod n) dönüşümünü yinele ve xₖ ile x₂ₖ’yı karşılaştır. EBOB(x₂ₖ − xₖ, n) aşikâr değilse bir çarpandır — çoğu zaman deneme bölmesinden çok önce bulunur.',
+          fermatNumbers:
+            'Fermat her Fₖ = 2^(2ᵏ) + 1 sayısının asal olduğunu sanıyordu. Yalnızca F₀ … F₄’ün asal olduğu biliniyor; Euler 641 | F₅ olduğunu buldu.',
+          mersenne:
+            'Mₚ = 2ᵖ − 1 ancak p asalsa asal olabilir. Lucas–Lehmer testi bunu p − 2 kare almayla belirler ve her Mersenne asalı bir çift mükemmel sayı verir.',
+        },
+        fermatFound: '{tries} farklı s değerinden sonra bulundu',
+        fermatGaveUp: '{tries} s değerinden sonra çarpan bulunamadı',
+        perfectSquare: 'Kare mi?',
+        trivial: 'Yalnızca aşikâr n · 1 ayrışımı çıktı, dolayısıyla n asaldır.',
+        rhoFound: '{k}. turda çarpan bulundu',
+        rhoFailed:
+          'Döngü çarpan bulunmadan kapandı. Başka bir başlangıç değeri ya da c sabiti deneyin.',
+        fermatPrime: 'F{k} asaldır',
+        fermatComposite: 'F{k} bileşiktir',
+        value: 'Değer',
+        digits: 'Basamak',
+        fermatFactor: 'Çarpan {d} = {j}·2^{k2} + 1; diğer çarpan {cofactor}.',
+        noSmallFactor: 'Arama sınırı içinde j·2^(k+2) + 1 biçiminde çarpan bulunamadı.',
+        mersennePrime: '2^{p} − 1 bir Mersenne asalıdır',
+        mersenneComposite: '2^{p} − 1 bileşiktir',
+        compositeExponent:
+          '{p} bileşik ve 2ᵃ − 1 sayısı 2^(ab) − 1’i böler; burada {divisor} bir çarpandır.',
+        perfect: 'Mükemmel sayı 2^({p} − 1)·(2^{p} − 1) = {value}',
+      },
+      arith: {
+        modeProfile: 'n’nin profili',
+        modeDirichlet: 'Dirichlet çarpımı',
+        modeInversion: 'Möbius ters çevirme',
+        modeThabit: 'Sabit kuralı',
+        fn: {
+          I: 'birim',
+          u: 'sabit 1',
+          N: 'n’nin kendisi',
+          mu: 'Möbius',
+          phi: 'Euler fi',
+          tau: 'bölen sayısı',
+          sigma: 'bölenler toplamı',
+          lambda: 'Liouville',
+          mu2: 'karesiz göstergesi',
+        },
+        kind: {
+          perfect: '{n} mükemmeldir: σ(n) = 2n',
+          abundant: '{n} bolluk sayısıdır: σ(n) > 2n',
+          deficient: '{n} eksik sayıdır: σ(n) < 2n',
+        },
+        multiplyPerfect: '{n}, {k}-mükemmeldir: σ(n) = {k}n.',
+        aliquotHeading: 'Alikot dizisi n → σ(n) − n',
+        amicable: '{n} ve {m} dost sayılardır: her biri diğerinin öz bölenlerinin toplamıdır.',
+        notAmicable: '{n} sayısının dost eşi yoktur.',
+        productMatches: '{f} ⋆ {g}, {h} fonksiyonuna eşittir',
+        productNew: '{f} ⋆ {g} listedeki fonksiyonlardan biri değil',
+        inversionWorks: 'Möbius ters çevirme {g} fonksiyonunu geri verir',
+        inversionFails: 'Ters çevirme g’yi geri vermedi',
+        inversionF: 'Burada f = {g} ⋆ u = {f}.',
+        thabitWorks: 'n = {n}: üç sayının üçü de asal, dolayısıyla kural bir dost sayı çifti verir',
+        thabitFails: 'n = {n}: üç sayının hepsi asal değil, dolayısıyla kural bir şey vermez',
+      },
+      dist: {
+        modeSieve: 'Kalbur',
+        modeCounting: 'π(x) ve Li(x)',
+        modeRace: 'Asal yarışları',
+        modeTwins: 'İkiz asallar',
+        modeAverages: 'Ortalama mertebeler',
+        modeZeta: 'Zeta fonksiyonu',
+        raceMod4: 'mod 4',
+        raceMod3: 'mod 3',
+        raceModulus: 'Yarış modülü',
+        explain: {
+          sieve: 'Her p ≤ √n asalının katlarını sil; geriye kalanlar asaldır.',
+          counting:
+            'Asal Sayı Teoremi: π(x) ~ x / ln x. Gauss’un logaritmik integrali Li(x) = ∫₂ˣ dt / ln t çok daha iyi bir tahmindir.',
+          race:
+            'Her kalan sınıfındaki asalları say. İki takım da sonsuzdur, ama kalan olmayan takım neredeyse her zaman öndedir (Chebyshev yanlılığı).',
+          twins:
+            'İkisi de asal olan p, p + 2 çiftleri. Sonsuz sayıda olup olmadıkları bilinmiyor; Hardy–Littlewood sezgisi kaç tane olacağını tahmin eder.',
+          averages: 'τ, σ ve φ’nin tek tek değerleri zıplar, ama ortalamaları düzgün büyür.',
+          zeta:
+            'Gerçel s > 1 için ζ(s) hem tüm n üzerinde bir toplam hem de tüm asallar üzerinde bir çarpımdır — asallarla analiz arasındaki köprü.',
+        },
+        sieveCount: '{n} sayısına kadar {count} asal',
+        sievingPrimes: 'Kalburlayan asallar (p ≤ √n): {primes}',
+        sieveGrid: 'Kalbur ızgarası',
+        sieveLegend: 'Yeşil sayılar kalburdan geçer; küçük alt simge sayıyı ilk silen asaldır.',
+        countingHeading: '{x} sayısına kadar asal sayma',
+        errorChart: 'Her tahminin hatası: Li(x) − π(x) ve x/ln x − π(x)',
+      pntNote:
+          'Bu aralıkta Li(x) hep π(x)’in üstünde kalır, yine de Littlewood farkın işaretinin sonsuz kez değiştiğini kanıtladı.',
+        raceHeading: '{x} sayısına kadar mod {m} asallar',
+        raceFirstLead: '1 (mod {m}) takımı ilk kez {x} değerinde öne geçer.',
+        raceNeverLeads:
+          '{x} sayısına kadar ≡ 1 (mod {m}) asallar, ≡ {other} takımının hiç önüne geçmez.',
+        raceChanges: 'Liderlik değişimleri (x → önde olan sınıf): {list}',
+        twinsHeading: '{x} sayısına kadar {count} ikiz asal çifti',
+        twinsNote: 'C₂ ≈ 0,6601 ikiz asal sabitidir. Tahmin bir teorem değil, bir sanıdır.',
+        averagesHeading: '{x} sayısına kadar ortalamalar',
+        zetaHeading: '{n} terimle ζ({s})',
+        tailBound: 'Kuyruk sınırı N^(1−s)/(s − 1)',
+        exactValue: 'Kesin değer',
+      },
+      lattice: {
+        heading: 'x > 0 ve y > 0 olan {count} çözüm',
+        explain:
+          'Pozitiflik koşulu t parametresini bir aralığa sıkıştırır; pozitif çözümleri saymak bu aralıktaki tam sayıları saymaktır.',
+      },
+      groups: {
+        heading: 'ℤ{n} tabloları',
+        multiplication: 'Çarpma',
+        addition: 'Toplama',
+        powers: 'Kuvvetler',
+        units: 'Birimler (vurgulu): {units}. Mertebeler: {orders}.',
+      },
     },
 
     fields: {
@@ -1062,6 +1477,23 @@ export const translations = {
       shareModulus2: 'Modül m₂',
       shareModulus3: 'Modül m₃',
       coefficientC: 'Katsayı c',
+      hypotenuseLimit: 'Hipotenüs üst sınırı N',
+      parameterP: 'Parametre p',
+      parameterQ: 'Parametre q',
+      nonSquareD: 'Kare olmayan d',
+      constantK: 'Sabit k',
+      searchBound: 'Arama sınırı |x|',
+      oddIntegerN: 'Tek tam sayı n',
+      seed: 'Başlangıç x₀',
+      polynomialShift: 'x² + c içindeki c sabiti',
+      indexK: 'İndeks k',
+      exponentP: 'Üs p',
+      functionF: 'Fonksiyon f',
+      functionG: 'Fonksiyon g',
+      upToN: 'n üst sınırı',
+      upToX: 'x üst sınırı',
+      realS: 'Gerçel s > 1',
+      termsN: 'Terim sayısı N',
     },
 
     workbench: {
@@ -1223,6 +1655,31 @@ export const translations = {
         description:
           'Wilson teoremi, Fermat ve Miller testleri, güçlü sahte asallar ve Carmichael sayıları',
       },
+      factoring: {
+        title: 'Çarpanlama yöntemleri ve özel asallar',
+        description:
+          'Fermat çarpanlama, Pollard rho, Fermat sayıları, Lucas–Lehmer ile Mersenne asalları ve mükemmel sayılar',
+      },
+      sums_of_squares: {
+        title: 'Kareler toplamı ve Pisagor üçlüleri',
+        description:
+          'Hangi n’ler a² + b² olur, r₂(n), üç ve dört kare, Gauss çarpanları ve tüm Pisagor üçlüleri',
+      },
+      pell_curves: {
+        title: 'Pell denklemi ve eğriler',
+        description:
+          'Sürekli kesirler ve bileşim ile x² − dy² = 1; y² = x³ + k üzerindeki tam sayı noktaları',
+      },
+      arithmetic_functions: {
+        title: 'Aritmetik fonksiyonlar',
+        description:
+          'σₖ, μ, λ, Λ, mükemmel ve dost sayılar, alikot dizileri, Dirichlet çarpımları ve Möbius ters çevirme',
+      },
+      prime_distribution: {
+        title: 'Asalların dağılımı',
+        description:
+          'Eratosthenes kalburu, π(x) ile Li(x), asal yarışları, ikiz asallar, ortalama mertebeler ve ζ(s)',
+      },
     },
 
     insights: {
@@ -1317,6 +1774,45 @@ export const translations = {
           'n \\text{ asal} \\iff (n-1)! \\equiv -1 \\pmod{n}, \\qquad p \\text{ asal} \\implies a^{p-1} \\equiv 1 \\pmod{p}',
         history:
           'Wilson teoremini 1000 yılları civarında İbn el-Heysem ifade etti, 1771’de Lagrange kanıtladı. Korselt kriterini 1899’da verdi, ilk örnekleri 1910–12’de Robert Carmichael buldu; Miller (1976) ve Rabin (1980) Miller testini standart olasılıksal asallık testine dönüştürdü.',
+      },
+      factoring: {
+        pedagogy:
+          'Asallığı test etmek kolay, çarpanlara ayırmak zordur — RSA bu farka dayanır. Fermat yöntemi √n’ye yakın çarpanları hedefler; Pollard rho ise iki terim gizli bir çarpana göre çakışana kadar sözde rastgele bir dizide yürür.',
+        theorem:
+          'n = s^2 - t^2 = (s+t)(s-t), \\qquad M_p \\text{ asal} \\iff x_{p-2} \\equiv 0 \\pmod{M_p}',
+        history:
+          'Fermat yöntemini 1643’te anlattı; Euler F₅’i 1732’de çarpanlarına ayırdı; Lucas (1876) ve Lehmer (1930) Mersenne testini verdi; Pollard rho’yu 1975’te yayımladı.',
+      },
+      sums_of_squares: {
+        pedagogy:
+          'İki kare toplamlarının çarpımı yine iki kare toplamıdır, dolayısıyla her şey asallara indirgenir: 2 ve p ≡ 1 (mod 4) olan her asal iki karenin toplamıdır, p ≡ 3 (mod 4) ise asla değildir.',
+        theorem:
+          'n = a^2 + b^2 \\iff p^{e} \\parallel n,\\ p \\equiv 3 \\!\\!\\pmod 4 \\implies 2 \\mid e',
+        history:
+          'Fermat iki kare teoremini 1640’ta ifade etti, Euler 1749’da kanıtladı; Lagrange dört kare teoremini 1770’te kanıtladı.',
+      },
+      pell_curves: {
+        pedagogy:
+          'Bir rasyonel noktası olan konikte doğrular çizerek sonsuz çok nokta bulunur. x² − dy² = 1 hiperbolünde tam sayı noktaları bir grup oluşturur: hepsini (x₁ + y₁√d)ᵏ bileşimiyle elde et.',
+        theorem: '(x_1 + y_1\\sqrt{d})^k = x_k + y_k\\sqrt{d} \\implies x_k^2 - d\\,y_k^2 = 1',
+        history:
+          'Bileşim kuralını Brahmagupta (628) buldu; Lagrange (1768) Pell denkleminin her zaman çözümü olduğunu kanıtladı. Euler denklemi yanlışlıkla John Pell’e atfetti.',
+      },
+      arithmetic_functions: {
+        pedagogy:
+          'Çarpımsal fonksiyonlar asal kuvvetlerdeki değerleriyle belirlenir. Dirichlet çarpımı altında I birimli bir grup oluştururlar ve μ, sabit u fonksiyonunun tersidir — Möbius ters çevirmesi budur.',
+        theorem:
+          'f = g \\star u \\iff g = f \\star \\mu, \\qquad (f \\star g)(n) = \\sum_{d \\mid n} f(d)\\, g(n/d)',
+        history:
+          'Öklid, 2ᵖ − 1 asalken 2ᵖ⁻¹(2ᵖ − 1)’in mükemmel olduğunu kanıtladı, Euler çift sayılar için tersini kanıtladı; Sabit bin Kurra dost sayı kuralını dokuzuncu yüzyılda verdi; Möbius μ’yü 1832’de tanıttı.',
+      },
+      prime_distribution: {
+        pedagogy:
+          'Asallar tek tek rastgele görünür ama toplu hâlde düzenlidir: x civarında kabaca ln x sayıdan biri asaldır. Li(x) ve ζ(s) gibi analitik araçlar bunu kesinleştirir.',
+        theorem:
+          '\\pi(x) \\sim \\frac{x}{\\ln x} \\sim \\mathrm{Li}(x), \\qquad \\zeta(s) = \\sum_{n \\ge 1} n^{-s} = \\prod_p \\left(1 - p^{-s}\\right)^{-1}',
+        history:
+          'Gauss Asal Sayı Teoremini gençken tahmin etti; Hadamard ve de la Vallée Poussin, Riemann’ın ζ fonksiyonunu kullanarak 1896’da birbirinden bağımsız kanıtladı.',
       },
     },
 
@@ -1442,6 +1938,27 @@ export const translations = {
         '{x} ve {y} sayıları {gcd} çarpanını paylaşıyor; modüller ve p ikişer ikişer aralarında asal olmalıdır.',
       sharingThresholdFails: 'm₁m₂ > p·m₃ (m₁ < m₂ < m₃ iken) gerekir, ama {M} ≤ {pm}.',
       sharingTTooLarge: 't çok büyük: K + tp, m₁m₂’den küçük kalmalıdır, dolayısıyla t ≤ {max}.',
+      latticeNeedsPositive: 'Pozitif çözümleri saymak için a > 0 ve b > 0 olmalıdır.',
+      pythagoreanNeedsPQ: '1 ≤ p < q olacak şekilde tam sayılar seçin.',
+      tripleLimitRange: '5 ile {max} arasında bir hipotenüs sınırı seçin.',
+      sieveRange: 'Kalbur 2 ≤ n ≤ {max} için asalları listeler.',
+      groupTableRange: 'Tablolar 2 ≤ n ≤ {max} için çizilir.',
+      fermatIndexRange: '0 ≤ k ≤ {max} seçin.',
+      lucasLehmerRange: '2 ≤ p ≤ {max} olan bir üs seçin.',
+      fermatFactorNeedsOdd:
+        'Fermat yöntemi 3 veya daha büyük tek bir n gerektirir (önce 2 çarpanlarını ayırın).',
+      rhoNeedsComposite: '{n} asal, çarpanlarına ayrılacak bir şey yok.',
+      squaresTooLarge: 'Gösterimler n ≤ {max} için aranır.',
+      pellNeedsD: 'd ≥ 2 seçin.',
+      pellSquare:
+        '{d} tam kare, dolayısıyla x² − dy² = 1 denkleminin yalnızca aşikâr çözümleri vardır.',
+      pellPeriodTooLong: 'Sürekli kesir periyodu {max} terimi aşıyor.',
+      mordellZero: 'k = 0 için her (t², t³) bir noktadır; k ≠ 0 seçin.',
+      mordellBoundRange: '1 ile {max} arasında bir arama sınırı seçin.',
+      thabitRange: '2 ≤ n ≤ 64 seçin.',
+      dirichletRange: '1 ≤ n ≤ {max} seçin.',
+      countingRange: '{min} ile {max} arasında bir değer seçin.',
+      zetaNeedsS: 'Seri yalnızca s > 1 için yakınsar (bu araç s ≤ 64 kabul eder).',
     },
 
     wiki: {

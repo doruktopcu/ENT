@@ -241,7 +241,8 @@ export function PanelHeading({ children, Icon, tone = 'slate' }) {
   }[tone];
 
   return (
-    <h4 className={`text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${color}`}>
+    // No `uppercase`: headings carry notation (σ(n), ℤₙ, Fₖ) that case-mapping corrupts.
+    <h4 className={`text-sm font-bold flex items-center gap-1.5 ${color}`}>
       {Icon && <Icon className="w-4 h-4" aria-hidden="true" />}
       {children}
     </h4>
@@ -254,5 +255,108 @@ export function MathBox({ math }) {
     <div className="text-center p-3 bg-slate-950 rounded-xl border border-slate-800 overflow-x-auto">
       <MathRender math={math} block />
     </div>
+  );
+}
+
+/**
+ * Minimal multi-series line chart (inline SVG, no dependency). Series are
+ * labelled directly at their right-hand end as well as in the legend, so the
+ * reader never has to match colours to a key.
+ */
+const SERIES_COLORS = ['#f59e0b', '#818cf8', '#34d399', '#f472b6'];
+
+export function LineChart({ series, height = 180, yLabel, xLabel, zeroLine = false }) {
+  const width = 560;
+  const pad = { left: 52, right: 70, top: 12, bottom: 28 };
+  const all = series.flatMap((s) => s.points);
+  if (all.length === 0) return null;
+
+  const xs = all.map((p) => p.x);
+  const ys = all.map((p) => p.y);
+  const xMin = Math.min(...xs);
+  const xMax = Math.max(...xs);
+  const yMin = Math.min(...ys, zeroLine ? 0 : Infinity);
+  const yMax = Math.max(...ys, zeroLine ? 0 : -Infinity);
+  const sx = (x) => pad.left + ((x - xMin) / (xMax - xMin || 1)) * (width - pad.left - pad.right);
+  const sy = (y) => pad.top + (1 - (y - yMin) / (yMax - yMin || 1)) * (height - pad.top - pad.bottom);
+  const fmt = (v) =>
+    Math.abs(v) >= 1e6 ? `${(v / 1e6).toFixed(1)}M` : Math.abs(v) >= 1e3 ? `${(v / 1e3).toFixed(1)}k` : `${Math.round(v * 100) / 100}`;
+  const ticks = [0, 0.5, 1];
+
+  return (
+    <figure className="space-y-2">
+      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto" role="img" aria-label={yLabel}>
+        {ticks.map((f) => {
+          const y = yMin + f * (yMax - yMin);
+          return (
+            <g key={f}>
+              <line x1={pad.left} x2={width - pad.right} y1={sy(y)} y2={sy(y)} stroke="currentColor" className="text-slate-800" strokeWidth="1" />
+              <text x={pad.left - 6} y={sy(y) + 3} textAnchor="end" className="fill-slate-500" fontSize="10">
+                {fmt(y)}
+              </text>
+            </g>
+          );
+        })}
+        {zeroLine && yMin < 0 && yMax > 0 && (
+          <line x1={pad.left} x2={width - pad.right} y1={sy(0)} y2={sy(0)} stroke="currentColor" className="text-slate-500" strokeDasharray="3 3" />
+        )}
+        {[xMin, xMax].map((x) => (
+          <text key={x} x={sx(x)} y={height - 8} textAnchor="middle" className="fill-slate-500" fontSize="10">
+            {fmt(x)}
+          </text>
+        ))}
+        {xLabel && (
+          <text x={(pad.left + width - pad.right) / 2} y={height - 8} textAnchor="middle" className="fill-slate-500" fontSize="10">
+            {xLabel}
+          </text>
+        )}
+        {(() => {
+          // End labels: push apart vertically when series finish close together.
+          const labelY = series
+            .map((s, i) => ({ i, y: sy(s.points[s.points.length - 1].y) + 3 }))
+            .sort((a, b) => a.y - b.y);
+          for (let j = 1; j < labelY.length; j += 1) {
+            labelY[j].y = Math.max(labelY[j].y, labelY[j - 1].y + 11);
+          }
+          const yFor = Object.fromEntries(labelY.map(({ i, y }) => [i, y]));
+
+          return series.map((s, i) => {
+            const color = s.color ?? SERIES_COLORS[i % SERIES_COLORS.length];
+            const d = s.points.map((p, j) => `${j === 0 ? 'M' : 'L'}${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`).join('');
+            const last = s.points[s.points.length - 1];
+            return (
+              <g key={s.label}>
+                <path d={d} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" />
+                <text x={sx(last.x) + 6} y={yFor[i]} fill={color} fontSize="10" fontWeight="600">
+                  {s.label}
+                </text>
+              </g>
+            );
+          });
+        })()}
+      </svg>
+      <figcaption className="flex flex-wrap gap-3 text-[11px] text-slate-400">
+        {series.map((s, i) => (
+          <span key={s.label} className="flex items-center gap-1.5">
+            <span className="w-3 h-0.5 inline-block" style={{ background: s.color ?? SERIES_COLORS[i % SERIES_COLORS.length] }} />
+            {s.label}
+          </span>
+        ))}
+      </figcaption>
+    </figure>
+  );
+}
+
+/** Two-column key/value list for quick numeric summaries. */
+export function FactList({ items }) {
+  return (
+    <dl className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
+      {items.map(({ label, value }) => (
+        <div key={label} className="flex justify-between gap-3 p-2 bg-slate-900 rounded-lg border border-slate-800">
+          <dt className="text-slate-400">{label}</dt>
+          <dd className="font-mono text-amber-300 text-right break-all">{value}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }

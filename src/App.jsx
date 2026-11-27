@@ -23,8 +23,13 @@ import QuadraticResidueSolver from './components/Solvers/QuadraticResidueSolver'
 import PrimitiveRootSolver from './components/Solvers/PrimitiveRootSolver';
 import CryptographySolver from './components/Solvers/CryptographySolver';
 import PrimalitySolver from './components/Solvers/PrimalitySolver';
+import SumsOfSquaresSolver from './components/Solvers/SumsOfSquaresSolver';
+import PellCurvesSolver from './components/Solvers/PellCurvesSolver';
+import FactoringSolver from './components/Solvers/FactoringSolver';
+import ArithmeticFunctionsSolver from './components/Solvers/ArithmeticFunctionsSolver';
+import PrimeDistributionSolver from './components/Solvers/PrimeDistributionSolver';
 
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.1.0';
 
 /** A lookup table beats a dozen chained `&&` expressions in the render tree. */
 const SOLVERS = {
@@ -40,6 +45,11 @@ const SOLVERS = {
   primitive_roots: PrimitiveRootSolver,
   cryptography: CryptographySolver,
   primality: PrimalitySolver,
+  factoring: FactoringSolver,
+  sums_of_squares: SumsOfSquaresSolver,
+  pell_curves: PellCurvesSolver,
+  arithmetic_functions: ArithmeticFunctionsSolver,
+  prime_distribution: PrimeDistributionSolver,
 };
 
 const TAB_PANELS = {

@@ -4,6 +4,7 @@ import { computeEulerPhi } from '../../utils/numberTheoryEngine';
 import MathRender from '../MathRender';
 import { useApp } from '../../context/AppContext';
 import { useAutoSaveHistory, useSolverState } from '../../hooks/useSolverState';
+import GroupTablesPanel from './panels/GroupTablesPanel';
 import {
   EngineMessage,
   IntegerField,
@@ -146,6 +147,7 @@ export default function EulerPhiSolver() {
           </div>
         </>
       )}
+      <GroupTablesPanel n={n} />
     </div>
   );
 }

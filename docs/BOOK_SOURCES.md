@@ -108,15 +108,61 @@ modular powers, Legendre/Jacobi) were written before the book was consulted. The
 field in `topics.js` points readers to the matching sections; nothing was changed to follow
 the book's presentation.
 
-## Tier 2 backlog (not implemented yet)
+## Tier 2 additions (`src/utils/bookEngineTier2.js`)
 
-| Chapter | Planned |
-| --- | --- |
-| 3 | Positive lattice points on ax + by = c (§3.3); Pythagorean triple generator (§3.4) |
-| 6 | Sieve of Eratosthenes (§6.2.2) |
-| 8 | Addition, multiplication and power tables of ℤₙ (§8.1–8.2) |
-| 12 | Fermat and Mersenne numbers, Lucas–Lehmer (§12.1); Fermat factoring (§12.5.3); Pollard ρ (§12.6.1) |
-| 13–14 | Sums of two squares and r₂(n) (§13); four squares, Gaussian norm (§14.1–14.2) |
-| 15 | Pell's equation (§15.4–15.6); integer points on Mordell curves (§15.3) |
-| 18–19, 23 | σₖ, perfect/abundant/deficient, abundancy index, amicable pairs (§19.4); Dirichlet convolution and Möbius inversion (§23.2–23.4) |
-| 20–22 (Tier 3) | Averages of τ and σ, π(x) against Li(x), prime races, twin primes |
+### Chapters 3, 6 and 8
+
+| Function | Book source | What was taken | Notes / deviations |
+| --- | --- | --- | --- |
+| `positiveLatticePoints` | §3.3 (pp. 26–30), Definition 3.3.3 | Positivity of x(t), y(t) cuts t to an interval; count integers in it with floor/ceiling | Brute-force check over a, b ≤ 10, c ≤ 80 |
+| `pythagoreanFromPQ`, `pythagoreanTriples` | Theorem 3.4.6, Algorithm 3.4.7 (p. 33), Proposition 3.4.9 (area) | x = q² − p², y = 2pq, z = p² + q² with p < q coprime, opposite parity; multiples give the rest | Fixtures from the book's list: (3, 4, 5), (5, 12, 13). Count cross-checked by brute force to z ≤ 150 |
+| `sieveOfEratosthenes` | Algorithm 6.2.3, Example 6.2.4 (p. 76) | Cross out multiples of primes p ≤ √n | Fixture: 25 primes ≤ 100, sieving by 2, 3, 5, 7 |
+| `groupTables` | §8.1–8.2 (pp. 107–112) | Addition, multiplication and power tables of ℤₙ ("visualization"), units and orders | The book shows colour plots; we show tables with units highlighted |
+
+### Chapter 12 — special primes and factoring
+
+| Function | Book source | What was taken | Notes / deviations |
+| --- | --- | --- | --- |
+| `fermatNumber` | Definition 12.1.1 (p. 185), §11.5.1 (Euler's 641 · 6700417) | Fₖ = 2^(2ᵏ) + 1; F₅ is composite | **Searching only factors j·2^(k+2) + 1 is not from the book** (classical Euler–Lucas result) |
+| `lucasLehmer` | Algorithm 12.1.9, Example 12.1.10 (p. 188); Example 12.1.3; Theorem 19.4.2 | x₀ = 4, xᵢ₊₁ = xᵢ² − 2 mod Mₚ; composite p ⇒ composite Mₚ; perfect number 2^(p−1)Mₚ | Fixture: p = 5 ⇒ 14, 8, 0. Mersenne exponents ≤ 127 checked |
+| `fermatFactor` | Algorithm 12.5.9, Example 12.5.10 (pp. 202–203) | Start at ⌈√n⌉, find s² − n = t² | Fixtures: 143 = 13·11 on the first try; 93 = 31·3 at s = 17 |
+| `pollardRho` | Algorithms 12.6.1, 12.6.3; Example 12.6.4 (pp. 204–207) | f(x) = x² + 1, seed 2, compare x₂ₖ with xₖ (Floyd) | Fixture: n = 9991, sequence 2, 5, 26, 677, 8735, 8950, differences 21, 8709, 3977 ⇒ factor 97. **Book typo:** it factors 3672 where the difference is −3762 |
+
+### Chapters 13–14 — sums of squares
+
+| Function | Book source | What was taken | Notes / deviations |
+| --- | --- | --- | --- |
+| `sumOfTwoSquares` | Fact 13.1.1, Theorem 13.5.5, Example 13.5.6 (pp. 214–233), Exercise 13.7.7 (r₂); Example 14.1.1, Definition 14.1.2 (Gaussian integers) | Criterion on primes ≡ 3 (mod 4); count r₂(n) = 4∏(e + 1) over p ≡ 1 (mod 4); p = (a + bi)(a − bi) | The r₂ product formula is the standard closed form of the book's exercise. Brute-force check for n ≤ 600. Fixtures: 21 not representable; 13 = (3 + 2i)(3 − 2i) |
+| `sumsOfSquares` | Facts 14.2.1 (three squares), 14.2.2 (Lagrange) (p. 241) | 4ᵃ(8b + 7) obstruction; four squares always | The depth-first search for a representation is ours. Checked for every n ≤ 2000 |
+
+### Chapter 15 — points on curves
+
+| Function | Book source | What was taken | Notes / deviations |
+| --- | --- | --- | --- |
+| `pellEquation` | Proposition 15.6.1, Fact 15.6.2, Example 15.6.3, Fact 15.6.4 (pp. 266–269) | New solutions from (x₀ + y₀√d)ᵏ — the doubling/adding of points | Fixture: d = 2 ⇒ (3, 2), (17, 12), (99, 70). **The continued-fraction search for the fundamental solution is not from the book**, nor is the odd-period test for x² − dy² = −1 |
+| `mordellPoints` | §15.3, Facts 15.3.3 and 15.3.5 (pp. 255–257) | y² = x³ + k; Bachet's y² = x³ − 2 has only (3, ±5); x³ = y² − 7 has no solution | Bounded search only; it proves nothing beyond the bound (the UI says so) |
+
+### Chapters 18–19 and 23 — arithmetic functions
+
+| Function | Book source | What was taken | Notes / deviations |
+| --- | --- | --- | --- |
+| `arithmeticProfile` | Definition 19.1.1 (σₖ), Theorem 19.2.5, Definitions 19.4.1, 19.4.4, 19.4.5, 19.4.7, 19.4.11; Definitions 23.3.3–23.3.4 (ω, Ω, λ) | σₖ by the prime-power formula; perfect / abundant / deficient / k-perfect; abundancy index; amicable pairs; aliquot sequence | Fixtures: 28 and 8128 perfect; 12 abundant with index 7/3; 220 ↔ 284; 120 is 3-perfect. Λ (von Mangoldt) is from §21.4 |
+| `thabitRule` | Algorithm 19.4.14, Historical remark 19.4.13 (p. 337) | pₙ = 3·2ⁿ − 1, qₙ = 9·2²ⁿ⁻¹ − 1 | Fixtures: (220, 284), (17296, 18416), (9363584, 9437056) |
+| `dirichletProduct`, `mobiusInversion` | Definition 19.2.9 (u, N), Definition 23.2.3, Fact 23.3.2, Theorem 23.2.1, Facts 23.4.8–23.4.9 | f ⋆ g and the identities u⋆u = τ, u⋆N = σ, μ⋆u = I, φ⋆u = N, μ⋆N = φ; inversion f = g⋆u ⇔ g = f⋆μ | Recognises the result among nine named functions |
+
+## Tier 3 additions (analytic, floating point)
+
+| Function | Book source | What was taken | Notes / deviations |
+| --- | --- | --- | --- |
+| `primeCounting`, `offsetLogIntegral` | Definition 21.0.1, Definitions 21.2.1–21.2.2 (Li), Theorem 21.3.1 (PNT) | π(x) against x/ln x and Li(x) = ∫₂ˣ dt/ln t | **Ramanujan's series for li is not from the book.** Fixture: π(10⁶) = 78498 |
+| `primeRace` | §22.1, Fact 22.1.3, Fact 22.1.6 (pp. 388–390) | Race between 1 and 3 (mod 4) (and mod 3); lead changes | The 1-team first leads at 26861 (standard value, checked) |
+| `twinPrimes` | Definition 22.3.4, §22.3.2 heuristics | Count pairs p, p + 2 | Uses the Hardy–Littlewood constant C₂ ≈ 0.6601 for the estimate (heuristic). Fixture: 35 pairs below 1000 |
+| `averageOrders` | §20.1 (lattice points in a circle → π), §20.2–20.3 (average of τ ≈ ln x + 2γ − 1), §20.4 (σ ≈ π²x/12), §24.6.4 (φ ≈ 3x/π²) | The four averages and their predictions | Divisor-sum sieve is ours |
+| `zetaApproximations` | §24.2 (ζ), §24.3.2 (Euler product) | Partial sum vs Euler product vs π²/6, π⁴/90, … | Tail bound N^(1−s)/(s − 1) is the standard integral test |
+
+Chapter 25 (the Riemann explicit formula) is not implemented: it needs complex zeros of ζ,
+which is beyond an exact, offline arithmetic engine.
+
+## Not taken
+
+The book's Sage code, interact cells, figures and exercises are not reproduced.

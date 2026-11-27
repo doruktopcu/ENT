@@ -33,7 +33,7 @@ export const TOPICS = [
   },
   {
     id: 'euler_phi',
-    book: '§9.1–9.5',
+    book: '§8.1–8.2, §9.1–9.5',
     keywords: ['euler', 'phi', 'totient', 'crs', 'rrs', 'tks', 'iks', 'residue', 'kalan'],
   },
   {
@@ -125,6 +125,31 @@ export const TOPICS = [
       'güçlü sahte asal',
       'fermat test',
     ],
+  },
+  {
+    id: 'factoring',
+    book: '§12.1, §12.5–12.6, §19.4',
+    keywords: ['factoring', 'çarpanlara', 'pollard', 'rho', 'fermat factor', 'mersenne', 'lucas', 'lehmer', 'fermat number', 'fermat sayısı', 'perfect', 'mükemmel'],
+  },
+  {
+    id: 'sums_of_squares',
+    book: '§3.4, §13.1–13.6, §14.1–14.2',
+    keywords: ['sum of squares', 'kareler toplamı', 'two squares', 'four squares', 'lagrange', 'pythagorean', 'pisagor', 'gaussian', 'gauss tam', 'r2', 'triple', 'üçlü'],
+  },
+  {
+    id: 'pell_curves',
+    book: '§15.3–15.6',
+    keywords: ['pell', 'continued fraction', 'sürekli kesir', 'mordell', 'bachet', 'curve', 'eğri', 'conic', 'konik', 'hyperbola', 'hiperbol'],
+  },
+  {
+    id: 'arithmetic_functions',
+    book: '§18–19, §23',
+    keywords: ['sigma', 'tau', 'perfect', 'mükemmel', 'abundant', 'bolluk', 'amicable', 'dost', 'aliquot', 'dirichlet', 'convolution', 'möbius inversion', 'ters çevirme', 'liouville', 'mangoldt', 'thabit'],
+  },
+  {
+    id: 'prime_distribution',
+    book: '§6.2, §20–22, §24',
+    keywords: ['sieve', 'eratosthenes', 'kalbur', 'prime counting', 'asal sayma', 'pi(x)', 'li(x)', 'prime number theorem', 'asal sayı teoremi', 'twin', 'ikiz', 'race', 'yarış', 'zeta', 'average', 'ortalama'],
   },
 ];
 
